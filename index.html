@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美西小环线自驾 · 2026.07.04-07.17 行程</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+  :root { --bg:#f5f0eb; --text:#2c2416; --muted:#6b5e4a; --accent:#c75b2a; --border:#e0d5c7; --shadow:0 2px 12px rgba(0,0,0,.06); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .hero { background:linear-gradient(160deg,#1a3a4a 0%,#2d5a6e 30%,#8b5e3c 70%,#c75b2a 100%); color:#fff; padding:28px 20px 24px; text-align:center; }
+  .hero h1 { font-size:2rem; font-weight:800; letter-spacing:1px; }
+  .hero .sub { margin-top:6px; font-size:.88rem; opacity:.85; }
+  .hero .stats { display:flex; justify-content:center; gap:28px; margin-top:14px; flex-wrap:wrap; }
+  .hero .stat { text-align:center; }
+  .hero .stat-val { font-size:1.45rem; font-weight:700; }
+  .hero .stat-label { font-size:.68rem; opacity:.7; text-transform:uppercase; letter-spacing:.5px; }
+  .map-section { background:#fff; padding:0 0 8px; border-bottom:3px solid var(--accent); }
+  .map-section h2 { text-align:center; padding:12px 0 0; font-size:1rem; }
+  .map-hint { text-align:center; font-size:.68rem; color:var(--muted); padding:2px 0 8px; }
+  #full-map { height:460px; width:100%; background:#f0ebe0; }
+  .legend { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; padding:8px 16px 6px; font-size:.75rem; color:var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:5px; }
+  .legend .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .container { max-width:1040px; margin:0 auto; padding:20px 20px 60px; }
+  .section-title { font-size:1.3rem; font-weight:800; text-align:center; margin:10px 0 18px; letter-spacing:1px; }
+  .day { margin-bottom:24px; border-radius:14px; overflow:hidden; box-shadow:var(--shadow); background:#fff; }
+  .day-header { display:flex; align-items:center; gap:14px; padding:16px 22px; border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
+  .day-num { width:48px; height:48px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; color:#fff; }
+  .day-info { flex:1; min-width:0; }
+  .day-info h2 { font-size:1rem; font-weight:700; }
+  .day-date { font-size:.72rem; color:var(--muted); font-weight:700; margin-bottom:2px; }
+  .day-route-summary { font-size:.78rem; color:var(--accent); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .day-lodging { font-size:.75rem; font-weight:600; padding:4px 12px; border-radius:14px; background:#d4e4ed; color:#1a5a70; white-space:nowrap; text-align:center; line-height:1.3; }
+  .day-lodging.last { background:#fce4d6; color:#c0392b; }
+  .day-lodging.fly { background:#e8e0f0; color:#5b3a8c; }
+  .day-arrow { font-size:1.2rem; color:#ccc; transition:transform .25s; flex-shrink:0; }
+  .day.open .day-arrow { transform:rotate(180deg); }
+  .day-body { display:none; }
+  .day.open .day-body { display:block; }
+  .day-route-map { padding:0; border-bottom:1px solid #f0ebe0; }
+  .day-route-map .day-map { height:200px; width:100%; background:#fdfaf6; }
+  .day-highlights { display:flex; flex-wrap:wrap; gap:6px; padding:10px 16px 12px; background:#fdfaf6; border-top:1px solid #f0ebe0; }
+  .hl-tag { font-size:.7rem; font-weight:600; padding:2px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px; }
+  .hl-sight { background:#dce8d0; color:#3d5a1a; } .hl-food { background:#f5e0d0; color:#8b4513; }
+  .hl-stay { background:#d4e4ed; color:#1a5a70; } .hl-drive { background:#e8d5c4; color:#7a5230; }
+  .weather-card { display:grid; grid-template-columns:170px 1fr auto; gap:12px; align-items:center; padding:12px 18px; background:#f8fbfd; border-top:1px solid #edf2f3; border-bottom:1px solid #edf2f3; }
+  .weather-place { font-size:.78rem; font-weight:800; color:#1a5a70; }
+  .weather-place span { display:block; color:var(--muted); font-size:.68rem; font-weight:600; margin-top:1px; }
+  .weather-main { display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:.78rem; color:var(--text); }
+  .weather-pill { padding:3px 9px; border-radius:12px; background:#e9f3f6; color:#1a5a70; font-weight:700; }
+  .weather-note { font-size:.72rem; color:var(--muted); }
+  .weather-link { font-size:.72rem; font-weight:800; color:var(--accent); text-decoration:none; white-space:nowrap; }
+  .timeline-row { display:grid; grid-template-columns:100px 74px 1fr; gap:0; border-bottom:1px solid #f0ebe0; min-height:50px; align-items:start; padding:8px 0; }
+  .timeline-row:last-child { border-bottom:none; }
+  .timeline-time { text-align:center; font-weight:700; font-size:.78rem; color:var(--muted); padding:6px 8px; }
+  .timeline-miles { text-align:center; font-weight:600; font-size:.75rem; color:var(--accent); padding:6px 4px; }
+  .timeline-desc { font-size:.86rem; padding:6px 14px 6px 6px; }
+  .timeline-desc b { color:#1a3a4a; }
+  .leaflet-popup-content { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; font-size:.85rem; line-height:1.4; }
+  .leaflet-popup-content b { color:#1a3a4a; }
+  .tips-section { margin-top:32px; }
+  .tips-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .tip-card { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:var(--shadow); }
+  .tip-icon { font-size:1.6rem; margin-bottom:8px; }
+  .tip-title { font-weight:700; font-size:.9rem; margin-bottom:6px; color:#1a3a4a; }
+  .tip-body { font-size:.8rem; color:var(--muted); line-height:1.7; }
+  @media (max-width:640px) {
+    .hero { padding:16px 14px 14px; }
+    .hero h1 { font-size:1.28rem; letter-spacing:.5px; }
+    .hero .sub { font-size:.68rem; line-height:1.35; margin-top:4px; }
+    .hero .stats { gap:14px; margin-top:9px; }
+    .hero .stat-val { font-size:1.05rem; }
+    .hero .stat-label { font-size:.58rem; letter-spacing:0; }
+    .map-section h2 { padding-top:8px; font-size:.88rem; }
+    .map-hint { font-size:.62rem; padding-bottom:6px; }
+    #full-map { height:230px; } .day-map { height:150px; }
+    .legend { gap:8px; padding:6px 10px 4px; font-size:.62rem; }
+    .container { padding:12px 12px 44px; }
+    .section-title { font-size:1rem; margin:4px 0 10px; }
+    .timeline-row { grid-template-columns:72px 48px 1fr; } .day-header { padding:12px 14px; gap:10px; }
+    .weather-card { grid-template-columns:1fr; gap:6px; padding:12px 14px; }
+    .day-num { width:40px; height:40px; font-size:1rem; }
+    .tips-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>美西小环线自驾</h1>
+  <p class="sub">2026.07.04-07.17 · 洛杉矶 ⇢ 拉斯维加斯 ⇢ 大峡谷 ⇢ 佩吉 ⇢ 优胜美地 ⇢ 旧金山 ⇢ 1号公路 ⇢ 洛杉矶</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-val">14</div><div class="stat-label">日历天</div></div>
+    <div class="stat"><div class="stat-val">~3,200</div><div class="stat-label">公里</div></div>
+    <div class="stat"><div class="stat-val">5</div><div class="stat-label">国家公园/名胜</div></div>
+    <div class="stat"><div class="stat-val">3</div><div class="stat-label">州</div></div>
+  </div>
+</div>
+
+<div class="map-section">
+  <h2>🗺️ 全程导航路线总览</h2>
+  <p class="map-hint">蓝色路线沿实际公路走向 · 按天彩色虚线 · 可缩放拖拽</p>
+  <div id="full-map"></div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2d6a4f"></span> 起/终点</span>
+    <span><span class="dot" style="background:#c75b2a"></span> 国家公园/自然景观</span>
+    <span><span class="dot" style="background:#1a6b8a"></span> 城市/住宿</span>
+    <span><span class="dot" style="background:#9b59b6"></span> 文化/娱乐</span>
+    <span style="color:#1a6b8a;">━━</span> 导航路线
+  </div>
+</div>
+
+<div class="container">
+  <div class="section-title">📋 每日详细行程</div>
+  <div id="days"></div>
+
+  <div class="tips-section">
+    <div class="section-title">⚠️ 老司机必读 · 实用提醒</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🅿️</div>
+        <div class="tip-title">停车费预警</div>
+        <div class="tip-body">旧金山酒店停车 $60–90/晚，拉斯维加斯和洛杉矶市中心也贵。预订酒店时<b>务必确认是否含停车</b>，否则很容易超预算。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🕶️</div>
+        <div class="tip-title">必带物品清单</div>
+        <div class="tip-body">
+          · <b>偏光墨镜</b>——美西太阳极毒，开车必备<br>
+          · <b>车载充气泵</b>——395 公路、亚利桑那碎石多<br>
+          · <b>至少两箱矿泉水</b>——尤其 Page、大峡谷、Big Sur 夏天极易脱水
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🛣️</div>
+        <div class="tip-title">路况必查</div>
+        <div class="tip-body">
+          出发前务必查询：<br>
+          · <b>Tioga Pass</b>：nps.gov/yose/planyourvisit/tioga.htm<br>
+          · <b>Glacier Point Road</b>：nps.gov/yose/planyourvisit/conditions.htm<br>
+          这两个关任意一个，行程都可能需要大调整。
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🌡️</div>
+        <div class="tip-title">极端天气警告</div>
+        <div class="tip-body">
+          · 荒漠无人区夏季中午可达 <b>40℃+</b>，D6/D7 长途驾驶注意补水防疲劳<br>
+          · 荒漠无人区手机信号差，提前下载离线地图<br>
+          · 395 公路段加油站稀少，看到加油站就加满
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ═══════════ NAVIGATION ROUTE — road-level waypoints along actual highways ═══════════
+// Format: [lat, lng, dayLabel?] — waypoints follow real road alignments
+
+const navRoute = [
+  // ── D1: LAX arrival → E Line hotel → Science Center → Hollywood → Griffith by transit/rideshare ──
+  [33.9416,-118.4085], // LAX
+  [33.95,-118.40], [33.98,-118.36],
+  [34.0486,-118.2588], // 7th St / Metro Center, E Line hotel area
+  [34.0320,-118.2700], [34.0205,-118.2860], // Expo Park / California Science Center
+  [34.0407,-118.2468], // Downtown transfer
+  [34.0617,-118.2990], [34.0928,-118.3287], // Hollywood Walk of Fame
+  [34.1050,-118.3150], [34.1184,-118.3004], // Griffith Observatory
+  [34.0486,-118.2588], // back to E Line hotel area
+
+  // ── D2: E Line hotel → Universal Studios Hollywood full day by transit/rideshare ──
+  [34.0486,-118.2588],
+  [34.0500,-118.2550], [34.0560,-118.2470], // Metro transfer toward B Line
+  [34.0750,-118.2910], [34.0983,-118.3287],
+  [34.1381,-118.3534], // Universal / Studio City station
+  [34.1361,-118.3554], // Universal Studios Hollywood
+  [34.0983,-118.3287], [34.0486,-118.2588], // back to hotel
+
+  // ── D3: LAX rental car center → Barstow → Vegas (I-15) ──
+  [33.9416,-118.4085], // LAX rental car center
+  [34.05,-118.20], [34.10,-117.95], [34.15,-117.65],
+  [34.30,-117.45], [34.50,-117.25], [34.60,-117.10],
+  [34.80,-117.00], [34.90,-116.95],
+  [34.90,-117.02], [34.89,-117.05], // Barstow
+  [35.00,-116.80], [35.10,-116.55], [35.20,-116.20],
+  [35.30,-115.90], [35.45,-115.70], [35.55,-115.55],
+  [35.72,-115.40], [35.88,-115.38],
+  [36.00,-115.35], // Seven Magic Mountains area
+  [36.08,-115.20],
+  [36.1716,-115.1391], // Las Vegas Strip
+  [36.1700,-115.1410], // Fremont Street
+
+  // ── D4: Vegas → Hoover Dam → Seligman → Grand Canyon (US-93 → I-40 → AZ-64) ──
+  [36.1716,-115.1391],
+  [36.10,-115.08], [36.03,-115.01],
+  [35.99,-114.90], [35.98,-114.83], // Boulder City
+  [36.0160,-114.7377], // Hoover Dam
+  [35.95,-114.65], [35.80,-114.55],
+  [35.60,-114.40], [35.40,-114.45],
+  [35.19,-114.05], // Kingman
+  [35.20,-113.85], [35.22,-113.60], [35.25,-113.35],
+  [35.30,-113.00], [35.31,-112.90],
+  [35.3255,-112.8770], // Seligman
+  [35.30,-112.60], [35.28,-112.40],
+  [35.25,-112.19], // Williams
+  [35.35,-112.15], [35.55,-112.12],
+  [35.80,-112.12], [35.95,-112.12],
+  [36.0617,-112.1090], // Grand Canyon South Rim
+
+  // ── D5: Grand Canyon → Desert View → Page / Horseshoe Bend (AZ-64 → US-89) ──
+  [36.06,-112.05],
+  [36.05,-111.95],
+  [36.0433,-111.8260], // Desert View Watchtower
+  [36.00,-111.70], [35.93,-111.58],
+  [35.88,-111.41], // Cameron
+  [36.05,-111.39], [36.25,-111.42],
+  [36.50,-111.45], [36.70,-111.47],
+  [36.8790,-111.5103], // Horseshoe Bend / Page
+  [36.9147,-111.4558], // Page town
+
+  // ── D6: Antelope Canyon → return to Las Vegas (US-89 → AZ-389 → UT-59 → I-15) ──
+  [36.9147,-111.4558],
+  [36.8619,-111.3743], // Antelope Canyon
+  [36.88,-111.50], [36.87,-111.65],
+  [36.85,-111.80], [36.88,-112.00],
+  [37.05,-112.53], // Kanab
+  [36.95,-112.75], [36.88,-112.95],
+  [36.82,-113.15], [36.78,-113.35],
+  [36.75,-113.55], [36.80,-113.70],
+  [36.85,-113.90], [36.70,-114.05],
+  [36.50,-114.15], [36.30,-114.30],
+  [36.15,-114.50], [36.05,-114.70],
+  [36.00,-114.90], [36.05,-115.05],
+  [36.10,-115.15],
+  [36.1716,-115.1391], // Las Vegas
+
+  // ── D7: Las Vegas → Beatty → Bishop → Mammoth Lakes (US-95 → NV-266 → US-6 → US-395) ──
+  [36.1716,-115.1391],
+  [36.20,-115.25], [36.30,-115.40],
+  [36.5766,-115.6700], // Indian Springs
+  [36.70,-115.95], [36.80,-116.30],
+  [36.9086,-116.7592], // Beatty
+  [37.00,-116.80], [37.05,-117.00],
+  [37.15,-117.20], [37.25,-117.40],
+  [37.35,-117.60], [37.45,-117.75],
+  [38.0672,-117.2306], // Tonopah
+  [38.00,-117.45], [37.85,-117.70],
+  [38.0253,-118.0231], // Coaldale Junction / US-6
+  [37.90,-118.20], [37.75,-118.40],
+  [37.3614,-118.3997], // Bishop
+  [37.50,-118.65], [37.55,-118.80],
+  [37.60,-118.90],
+  [37.648,-118.972], // Mammoth Lakes
+
+  // ── D8: Mammoth Lakes → Tioga Pass → Yosemite Valley (US-395 → CA-120) ──
+  [37.65,-119.00], [37.70,-119.05],
+  [37.91,-119.26], // Tioga Pass
+  [37.88,-119.32], [37.86,-119.38], // Tuolumne Meadows
+  [37.83,-119.43],
+  [37.8306,-119.4587], // Tenaya Lake
+  [37.80,-119.50], [37.77,-119.55],
+  [37.7456,-119.5936], // Yosemite Valley
+  [37.72,-119.62], [37.70,-119.71],
+  [37.674,-119.784], // El Portal
+
+  // ── D9: El Portal → Glacier Point → SF (CA-140 → I-580) ──
+  [37.68,-119.75],
+  [37.730,-119.573], // Glacier Point
+  [37.65,-119.65], [37.55,-119.85],
+  [37.49,-119.97], // Mariposa
+  [37.42,-120.12], [37.35,-120.30],
+  [37.30,-120.48], // Merced
+  [37.33,-120.65], [37.38,-120.85],
+  [37.42,-121.05], [37.50,-121.30],
+  [37.55,-121.55], [37.60,-121.75],
+  [37.65,-121.95], [37.70,-122.15],
+  [37.72,-122.30], [37.75,-122.38],
+  [37.7749,-122.4194], // San Francisco
+
+  // ── D10: SF → Golden Gate → Pier 39 → Cable Car (local) ──
+  [37.8075,-122.4744], // Golden Gate Bridge
+  [37.8025,-122.4487], // Palace of Fine Arts
+  [37.8100,-122.4100], // Pier 39
+  [37.7950,-122.4080], // Cable Car / Union Sq
+  [37.7749,-122.4194], // hotel
+
+  // ── D11: SF → Stanford → Monterey Aquarium → Carmel (US-101 → CA-1) ──
+  [37.72,-122.40], [37.65,-122.35],
+  [37.55,-122.30], [37.45,-122.20],
+  [37.42,-122.16],
+  [37.4275,-122.1697], // Stanford
+  [37.38,-122.00], [37.25,-121.85],
+  [37.10,-121.75], [36.95,-121.75],
+  [36.80,-121.78], [36.70,-121.82],
+  [36.6183,-121.9018], // Monterey Bay Aquarium
+  [36.58,-121.91],
+  [36.5552,-121.9233], // Carmel
+
+  // ── D12: Carmel → 17-Mile Drive → Big Sur → Elephant Seal → San Luis Obispo / Morro Bay (CA-1) ──
+  [36.5552,-121.9233], // Carmel
+  [36.6002,-121.8947], // 17-Mile Drive / Monterey
+  [36.53,-121.93], [36.48,-121.92],
+  [36.42,-121.91],
+  [36.3716,-121.9017], // Bixby Bridge
+  [36.22,-121.79], [36.18,-121.72],
+  [36.1578,-121.6710], // McWay Falls
+  [36.30,-121.89], [36.22,-121.83],
+  [36.10,-121.73], [35.95,-121.62],
+  [35.80,-121.50], [35.72,-121.38],
+  [35.6634,-121.2660], // Piedras Blancas (elephant seals)
+  [35.62,-121.20], [35.55,-121.10],
+  [35.46,-121.00], [35.40,-120.85],
+  [35.28,-120.66], // San Luis Obispo
+
+  // ── D13: San Luis Obispo / Morro Bay → Solvang → Santa Barbara → Santa Monica → LAX ──
+  [35.10,-120.58], [34.95,-120.45],
+  [34.80,-120.30], [34.70,-120.22],
+  [34.5947,-120.1387], // Solvang
+  [34.57,-120.08], [34.52,-119.95],
+  [34.48,-119.85], [34.45,-119.75],
+  [34.4208,-119.6982], // Santa Barbara
+  [34.40,-119.60], [34.38,-119.45],
+  [34.32,-119.30], [34.25,-119.15],
+  [34.18,-119.00], [34.12,-118.80],
+  [34.05,-118.70], [34.0356,-118.6894], // Malibu / coast approach
+  [34.0259,-118.5194], [34.0094,-118.4973], // Santa Monica
+  [33.9950,-118.4800], [33.9800,-118.4500],
+  [33.9600,-118.4300],
+  [33.9416,-118.4085], // LAX
+];
+
+// Key waypoints
+const waypoints = [
+  { name:"LAX 洛杉矶机场", lat:33.9416, lng:-118.4085, type:"start", day:"D1 / D3取车" },
+  { name:"E Line 沿线酒店区", lat:34.0486, lng:-118.2588, type:"city", day:"D1-D2" },
+  { name:"好莱坞星光大道", lat:34.0928, lng:-118.3287, type:"culture", day:"D1" },
+  { name:"圣莫尼卡海滩", lat:34.0094, lng:-118.4973, type:"sight", day:"D13", dist:24 },
+  { name:"加州科学中心 / USC", lat:34.0205, lng:-118.2860, type:"culture", day:"D1", dist:24 },
+  { name:"环球影城 Universal Studios Hollywood", lat:34.1361, lng:-118.3554, type:"culture", day:"D2", dist:22 },
+  { name:"格里菲斯天文台", lat:34.1184, lng:-118.3004, type:"sight", day:"D1", dist:24 },
+  { name:"巴斯托 Barstow", lat:34.90, lng:-117.02, type:"city", day:"D3", dist:185 },
+  { name:"七彩巨石", lat:36.00, lng:-115.35, type:"sight", day:"D3", dist:250 },
+  { name:"拉斯维加斯", lat:36.1716, lng:-115.1391, type:"city", day:"D3, D6-D7" },
+  { name:"AREA15 · Omega Mart", lat:36.1326, lng:-115.1818, type:"culture", day:"D6" },
+  { name:"胡佛水坝", lat:36.0160, lng:-114.7377, type:"sight", day:"D4", dist:56 },
+  { name:"塞利格曼 (66号公路)", lat:35.3255, lng:-112.8770, type:"sight", day:"D4", dist:225 },
+  { name:"大峡谷国家公园", lat:36.0617, lng:-112.1090, type:"park", day:"D4-D5", dist:170 },
+  { name:"Desert View 瞭望塔", lat:36.0433, lng:-111.8260, type:"sight", day:"D5", dist:30 },
+  { name:"马蹄湾 / 佩吉", lat:36.8790, lng:-111.5103, type:"park", day:"D5-D6", dist:215 },
+  { name:"下羚羊峡谷", lat:36.8619, lng:-111.3743, type:"park", day:"D6", dist:16 },
+  { name:"Indian Springs 短停", lat:36.5766, lng:-115.6700, type:"city", day:"D7", dist:70 },
+  { name:"Beatty 休息", lat:36.9086, lng:-116.7592, type:"city", day:"D7", dist:115 },
+  { name:"Tonopah 午餐/加油", lat:38.0672, lng:-117.2306, type:"city", day:"D7", dist:150 },
+  { name:"Bishop / 毕晓普", lat:37.3614, lng:-118.3997, type:"city", day:"D7", dist:160 },
+  { name:"猛犸湖 / 毕晓普", lat:37.648, lng:-118.972, type:"city", day:"D7", dist:65 },
+  { name:"优胜美地国家公园", lat:37.7456, lng:-119.5936, type:"park", day:"D8-D9", dist:80 },
+  { name:"旧金山", lat:37.7749, lng:-122.4194, type:"city", day:"D9-D10", dist:305 },
+  { name:"双子峰 Twin Peaks", lat:37.7544, lng:-122.4477, type:"sight", day:"D10" },
+  { name:"苹果总部 Apple Park", lat:37.3349, lng:-122.0090, type:"culture", day:"备选", dist:80 },
+  { name:"斯坦福大学", lat:37.4275, lng:-122.1697, type:"culture", day:"D11", dist:13 },
+  { name:"蒙特雷湾水族馆", lat:36.6183, lng:-121.9018, type:"culture", day:"D11", dist:130 },
+  { name:"蒙特雷 / 17哩", lat:36.6002, lng:-121.8947, type:"city", day:"D12", dist:5 },
+  { name:"卡梅尔 Carmel", lat:36.5552, lng:-121.9233, type:"city", day:"D11", dist:24 },
+  { name:"大苏尔 Bixby大桥", lat:36.3716, lng:-121.9017, type:"park", day:"D12", dist:40 },
+  { name:"McWay 瀑布", lat:36.1578, lng:-121.6710, type:"park", day:"D12", dist:30 },
+  { name:"象海豹滩", lat:35.6634, lng:-121.2660, type:"sight", day:"D12", dist:130 },
+  { name:"San Luis Obispo / Morro Bay", lat:35.28, lng:-120.66, type:"city", day:"D12", dist:75 },
+  { name:"丹麦村 Solvang", lat:34.5947, lng:-120.1387, type:"culture", day:"D13", dist:105 },
+  { name:"圣芭芭拉", lat:34.4208, lng:-119.6982, type:"city", day:"D13", dist:65 },
+  { name:"马里布海岸", lat:34.0356, lng:-118.6894, type:"sight", day:"D13", dist:125 },
+  { name:"LAX 洛杉矶机场", lat:33.9416, lng:-118.4085, type:"end", day:"D13-D14", dist:24 },
+];
+
+// ═══════════ DAILY ITINERARY ═══════════
+const days = [
+  { num:"D1", date:"2026.07.04 周六", color:"#2d6a4f", lodging:"洛杉矶 E Line 附近", lodgingClass:"",
+    title:"落地洛杉矶 · 科学中心 · 好莱坞 · 格里菲斯天文台",
+    weather:{date:"2026-07-04", place:"洛杉矶市区 / Hollywood", lat:34.0522, lng:-118.2437, tip:"白天防晒补水，天文台傍晚有风；落地日强度高，按体力删减。"},
+    highlights:[{t:"08:20抵达LAX",c:"hl-stay"},{t:"不取车",c:"hl-stay"},{t:"科学中心",c:"hl-sight"},{t:"好莱坞短停",c:"hl-sight"},{t:"天文台夜景",c:"hl-sight"},{t:"公共交通/打车",c:"hl-drive"}],
+    routePts:[{n:"LAX",lat:33.9416,lng:-118.4085},{n:"E Line酒店区",lat:34.0486,lng:-118.2588},{n:"加州科学中心",lat:34.0205,lng:-118.2860},{n:"好莱坞星光大道",lat:34.0928,lng:-118.3287},{n:"格里菲斯天文台",lat:34.1184,lng:-118.3004},{n:"E Line酒店区",lat:34.0486,lng:-118.2588}],
+    events:[
+      ["08:20-11:30","-","<b>【✈️ 落地】</b>航班降落 LAX，办理入境、提取行李。"],
+      ["11:30-12:45","公交/打车","<b>【不取车】</b>先从 LAX 前往 <b>Metro E Line 沿线酒店</b>寄存行李/办理入住。推荐住 7th St/Metro、Pico、Expo Park/USC、Culver City 或 Santa Monica 站附近，优先选步行 5-10 分钟到站的酒店。"],
+      ["12:45-13:30","Metro E Line","乘 E Line 前往 <b>Expo Park/USC</b>，午餐从简，进入加州科学中心。"],
+      ["13:30-16:30","-","<b>【🚀 加州科学中心】</b>重点看航天、生态和互动展。落地日不贪多，孩子喜欢就多停，不建议再塞自然历史博物馆。<br>💰 常设展免费，特殊展/IMAX/奋进号相关预约以官网为准。"],
+      ["16:30-17:30","Metro/打车","前往 <b>Hollywood / 好莱坞星光大道</b>。这段建议直接短途打车或 Metro 换乘，别把体力耗在转车上。"],
+      ["17:30-18:15","-","<b>【好莱坞短停】</b>轻量打卡 Hollywood Walk of Fame、TCL 中国剧院手印、Dolby Theatre 外观。这里不久逛，主要为了孩子到此一游。"],
+      ["18:15-20:30","打车/公交","前往 <b>格里菲斯天文台</b> 看 Hollywood Sign、洛杉矶城市夜景和天文展厅。7/4 晚上人流可能大，如果上山交通/停车接驳混乱，就改在 Hollywood 早点吃饭回酒店。"],
+      ["20:30-22:00","打车/Metro","返回 E Line 沿线酒店休息。<br>💰 今日不产生租车和停车费；公共交通可用 TAP 卡/手机交通卡，跨区晚间移动优先打车。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果入境太慢或全家犯困，D1 只保留科学中心 + 酒店休息；好莱坞/天文台可放弃，D13 或下次再补。"],
+  ]},
+  { num:"D2", date:"2026.07.05 周日", color:"#e67e22", lodging:"洛杉矶 E Line 附近 (连住)", lodgingClass:"",
+    title:"环球影城 Hollywood 全天 · Nintendo World · 影城巴士",
+    weather:{date:"2026-07-05", place:"Universal Studios Hollywood", lat:34.1361, lng:-118.3554, tip:"暑期排队长，白天防晒补水；夜间离园人多，返程别拖太晚。"},
+    highlights:[{t:"环球影城",c:"hl-sight"},{t:"Nintendo World",c:"hl-sight"},{t:"Studio Tour",c:"hl-sight"},{t:"全天项目",c:"hl-drive"},{t:"不租车",c:"hl-stay"}],
+    routePts:[{n:"E Line酒店区",lat:34.0486,lng:-118.2588},{n:"Universal / Studio City",lat:34.1381,lng:-118.3534},{n:"环球影城",lat:34.1361,lng:-118.3554},{n:"E Line酒店区",lat:34.0486,lng:-118.2588}],
+    events:[
+      ["08:00-09:00","Metro/打车","从 E Line 沿线酒店出发，前往 <b>Universal / Studio City</b>。可 Metro 换乘 B Line 后坐免费接驳上山；6个人如果早晨想省力，也可以直接打车。"],
+      ["09:00-12:30","-","<b>【环球影城上半场】</b>优先排热门项目：<b>Super Nintendo World</b>、Harry Potter、Transformers / Jurassic World 等。暑期周日人多，入园后先看 App 排队时间。"],
+      ["12:30-13:30","-","园区午餐。餐厅排队也会长，错峰吃饭比正点硬排舒服。"],
+      ["13:30-17:30","-","<b>【Studio Tour + 下半场】</b>安排经典 <b>Studio Tour 影城巴士</b>，再补 Simpsons、Minions、WaterWorld 等表演/项目。带孩子别强刷全项目，优先保体力。"],
+      ["17:30-20:30","-","晚餐 + 查漏补缺。环球 Hollywood 通常没有迪士尼那种固定烟花，7/5 按无烟花规划；若官网当天有特别活动，再临时加。"],
+      ["20:30-21:30","Metro/打车","离园返回 E Line 沿线酒店。明早去 LAX 机场租车中心取车，正式开始自驾段。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果环球当天营业到较晚，建议 20:00-21:00 之间撤；不要玩到极限，D3 还要取车并开去拉斯维加斯。"],
+  ]},
+  { num:"D3", date:"2026.07.06 周一", color:"#9b59b6", lodging:"拉斯维加斯大道", lodgingClass:"",
+    title:"LAX机场取车 · 横穿大漠 · 七彩巨石 · 抵达赌城 · 实弹射击",
+    weather:{date:"2026-07-06", place:"拉斯维加斯", lat:36.1716, lng:-115.1391, tip:"荒漠高温日，车上备足水，避免正午长时间暴晒。"},
+    highlights:[{t:"机场取车",c:"hl-stay"},{t:"沙漠公路",c:"hl-drive"},{t:"Peggy Sue's",c:"hl-food"},{t:"七彩巨石",c:"hl-sight"},{t:"山姆补给",c:"hl-stay"},{t:"实弹射击",c:"hl-sight"},{t:"Fremont老街",c:"hl-sight"}],
+    routePts:[{n:"LAX取车",lat:33.9416,lng:-118.4085},{n:"巴斯托 Barstow",lat:34.90,lng:-117.02,dist:210},{n:"七彩巨石",lat:36.00,lng:-115.35,dist:250},{n:"山姆会员店",lat:36.1067,lng:-115.2070,dist:20},{n:"拉斯维加斯",lat:36.1716,lng:-115.1391,dist:10}],
+    events:[
+      ["07:30-08:45","公共交通/打车","酒店退房，从 E Line 沿线酒店前往 <b>LAX 机场租车中心</b>。行李多的话建议直接打车/网约车；想省预算可用 Metro + LAX 接驳组合。"],
+      ["08:45-09:45","-","<b>【机场取车】</b>在 LAX 租车中心办理取车，检查中大型 SUV 车况、胎压、备胎/补胎工具和油量，正式开启自驾大环线。"],
+      ["09:45-12:30","210 km","<b>【自驾·I-105/I-605/I-15N】</b>从 LAX 出发，绕出洛杉矶都会区后驶上 I-15 高速，横穿荒漠直奔经典公路中转站巴斯托（Barstow）。"],
+      ["12:30-13:30","-","在巴斯托复古餐厅 <b>Peggy Sue's Diner</b> 享用美式经典公路午餐（人均约 $15–20）。"],
+      ["13:30-17:00","250 km","<b>【自驾·I-15N】</b>继续开往 Vegas，途中在沙漠路边打卡网红艺术巨石<b>七彩巨石（Seven Magic Mountains）</b>（免费，游玩30分钟）。下午5点前抵达拉斯维加斯。"],
+      ["17:00-17:45","20 km","<b>【山姆会员店补给】</b>先去拉斯维加斯 <b>Sam's Club 山姆会员店</b>采购后续荒漠路段补给：整箱水、运动饮料、零食、水果、防晒和车上纸巾垃圾袋等。"],
+      ["17:45-18:15","10 km","开回拉斯维加斯大道酒店办理入住，放行李、稍作休整。"],
+      ["18:15-20:00","-","<b>【拉斯维加斯实弹射击体验】</b>前往市区室内靶场体验手枪/步枪套餐。建议提前预约傍晚时段，随身带护照或有效证件，全程听从教练安全指引；不参与的人可在酒店休息。"],
+      ["20:00-21:30","-","🌃 晚上前往 <b>Fremont Street（弗里蒙特老街）</b>观赏霓虹 LED 天幕（免费），在附近享用特色晚餐。如果还想体验拉斯维加斯的顶级娱乐，可改看太阳马戏团经典水上大秀 <b>「O Show」</b>（Bellagio 酒店，需提前购票），但机场取车 + 长途自驾 + 补给 + 射击 + O Show 同晚会比较赶。之后回酒店休息，明早出发大峡谷。"],
+      ["-","-","🔁 <b>备选/过路：</b>I-15 途中可拐入 <b>Calico Ghost Town 鬼镇</b>（$8/人，西部淘金遗迹），或在 <b>Mojave National Preserve</b> 周边短停看荒漠景观。不看 O Show 可去 <b>Bellagio 植物园</b>（免费）或 <b>Mirage 火山秀</b>（免费）。"],
+  ]},
+  { num:"D4", date:"2026.07.07 周二", color:"#c75b2a", lodging:"图萨扬 / 大峡谷园内木屋", lodgingClass:"",
+    title:"赌城出发 · 胡佛水坝 · 66号公路 · 大峡谷南缘落日",
+    weather:{date:"2026-07-07", place:"大峡谷南缘 / Tusayan", lat:36.0617, lng:-112.1090, tip:"南缘海拔高，早晚温差明显；落日后加一层外套。"},
+    highlights:[{t:"胡佛水坝",c:"hl-sight"},{t:"66号公路",c:"hl-drive"},{t:"塞利格曼",c:"hl-food"},{t:"大峡谷落日",c:"hl-sight"}],
+    routePts:[{n:"拉斯维加斯",lat:36.1716,lng:-115.1391},{n:"胡佛水坝",lat:36.016,lng:-114.738,dist:56},{n:"塞利格曼",lat:35.3255,lng:-112.877,dist:225},{n:"大峡谷南峡",lat:36.0617,lng:-112.109,dist:170}],
+    events:[
+      ["08:00-09:00","56 km","<b>【自驾·US-93】</b>退房出发前往<b>胡佛水坝（Hoover Dam）</b>。08:45抵达，参观大坝工程及科罗拉多河观景台（45分钟）。"],
+      ["09:30-12:30","225 km","<b>【自驾·I-40/Route 66】</b>横穿亚利桑那荒漠，开往 66 号公路历史小镇塞利格曼（Seligman）。"],
+      ["12:30-14:00","-","在 <b>Seligman 小镇</b>歇脚并享用美式简餐，带孩子跟美式老爷车、《汽车总动员》复古场景打卡拍照（1.5小时）。"],
+      ["14:00-17:30","170 km","<b>【自驾入园·AZ-64】</b>开往<b>大峡谷国家公园（南峡）</b>。15:30 左右抵达园内办理入住放置行李。随后前往 <b>Mather Point</b> 和 <b>Hopi Point</b>，全家沿峡谷边缘步道散步，在悬崖边静待壮丽的<b>大峡谷落日</b>（17:30-18:30）。<br>💰 大峡谷国家公园门票 $35/车（7天有效），胡佛水坝参观免费（过桥入内 Powerplant Tour $15/成人）。"],
+      ["18:30-20:00","-","在园内餐厅享用晚餐，夜晚可自愿观赏大峡谷漫天繁星。"],
+      ["-","-","🔁 <b>备选/过路：</b>如时间充裕，出 Vegas 后可绕道 <b>Valley of Fire 火焰谷州立公园</b>（$10/车，红色砂岩绝美），或 Kingman <b>Route 66 Museum</b>（$5/人）。大峡谷内可选坐 <b>免费接驳巴士</b> 跳玩各观景点。"],
+  ]},
+  { num:"D5", date:"2026.07.08 周三", color:"#8b5e3c", lodging:"佩吉市 (Page)", lodgingClass:"",
+    title:"大峡谷上午 · 印第安瞭望塔 · 马蹄湾日落",
+    weather:{date:"2026-07-08", place:"佩吉 / 马蹄湾", lat:36.8790, lng:-111.5103, tip:"红岩荒漠强晒，马蹄湾步道务必带水、帽子和防晒。"},
+    highlights:[{t:"大峡谷日出",c:"hl-sight"},{t:"Desert View",c:"hl-sight"},{t:"马蹄湾日落🌅",c:"hl-sight"},{t:"鲍威尔湖",c:"hl-sight"}],
+    routePts:[{n:"大峡谷",lat:36.0617,lng:-112.109},{n:"Desert View",lat:36.0433,lng:-111.826,dist:30},{n:"佩吉/马蹄湾",lat:36.879,lng:-111.5103,dist:215}],
+    events:[
+      ["05:30-09:00","-","起个大早前往观景点观赏<b>大峡谷日出</b>（朝霞打在千仞绝壁上极其震撼，自愿参加），随后回酒店享用早餐、退房。"],
+      ["09:00-12:30","215 km","<b>【自驾东门线·AZ-64/US-89】</b>经东门驶离大峡谷。途中停靠 <b>Desert View Watchtower（印第安瞭望塔）</b>俯瞰科罗拉多河（45分钟）。中午12:30前抵达佩吉市午餐。"],
+      ["13:30-16:30","-","下午在佩吉镇休整，可前往<b>鲍威尔湖（Lake Powell）</b>观景点欣赏红岩环绕的湛蓝湖面，在湖边散步拍照（游玩1.5小时）。"],
+      ["17:00-18:30","-","🌅 <b>黄金时间！</b>傍晚前往<b>马蹄湾（Horseshoe Bend）</b>，在日落前1小时抵达。日落时分的橙红色科罗拉多河 270° 大拐弯，光线封神级别震撼。从停车场往返步行约40分钟（游玩1.5小时）。<br>💰 马蹄湾停车场 $10/车（不属于国家公园，需单独付费），大峡谷门票 D4 已购买 7 天有效。鲍威尔湖观景点免费。"],
+      ["-","-","🔁 <b>备选/过路：</b>离开大峡谷后可停 <b>Cameron Trading Post</b> 印第安集市（历史百年），顺路看 <b>Navajo Bridge 纳瓦霍大桥</b>。佩吉如有时间可去 <b>Wahweap 码头</b> 坐船游鲍威尔湖（$50/人起）。"],
+  ]},
+  { num:"D6", date:"2026.07.09 周四", color:"#1a6b8a", lodging:"拉斯维加斯大道", lodgingClass:"",
+    title:"光影羚羊谷 · 返回赌城 · Omega Mart · 夜逛大道",
+    weather:{date:"2026-07-09", place:"佩吉 → 拉斯维加斯", lat:36.1716, lng:-115.1391, tip:"白天 Page 和 Vegas 都很热，长途驾驶每1.5小时补水休息。"},
+    highlights:[{t:"下羚羊峡谷",c:"hl-sight"},{t:"光影魔术",c:"hl-sight"},{t:"返回赌城",c:"hl-drive"},{t:"Omega Mart",c:"hl-sight"},{t:"AREA15",c:"hl-sight"}],
+    routePts:[{n:"佩吉",lat:36.9147,lng:-111.4558},{n:"下羚羊谷",lat:36.8619,lng:-111.3743,dist:16},{n:"AREA15 · Omega Mart",lat:36.1326,lng:-115.1818,dist:440},{n:"拉斯维加斯酒店",lat:36.1716,lng:-115.1391,dist:8}],
+    events:[
+      ["08:30-11:30","-","前往<b>下羚羊峡谷（Lower Antelope Canyon）</b>。参加 09:30 左右黄金光线班次的印第安导游团，由导游带领深入地下狭缝看奇幻的光影魔术（游玩2小时）。<br>💰 下羚羊谷必须跟团，票价约 <b>$60–90/人</b>（含 Navajo 导游费），需提前数周预订（antelopecanyon.com）。"],
+      ["11:30-12:30","-","在佩吉镇用午餐，补给水和零食。"],
+      ["12:30-18:00","440 km","<b>【自驾返程】</b>从佩吉出发，经 Kanab → St George → I-15 返回拉斯维加斯，先不回酒店，直接前往 <b>AREA15 · Omega Mart</b>。路上每1.5小时补水休息。"],
+      ["18:00-20:00","-","<b>【Omega Mart 奇幻超市】</b>体验 Meow Wolf 的沉浸式奇幻超市/艺术空间，适合带孩子边逛边探索隐藏房间和互动装置（建议预留1.5-2小时）。<br>💰 本日门票估算：羚羊谷 $60–90/人 + Omega Mart 约 <b>$55-70/人</b>。羚羊谷和 Omega Mart 都建议提前预订！"],
+      ["20:00-21:00","8 km","从 AREA15 开到拉斯维加斯大道酒店办理入住，放行李、洗漱休整。"],
+      ["21:00-22:30","-","🌃 晚上轻松逛<b>拉斯维加斯大道</b>，可看<b>百乐宫音乐喷泉</b>（免费），或在酒店/大道附近吃晚餐。今天长途返程，不建议再排太满。"],
+      ["-","-","🔁 <b>备选/过路：</b>如抢不到下羚羊谷票，可改去 <b>上羚羊谷</b>（$100–130/人）或 <b>羚羊谷 X</b>（$50/人）。途中可经 <b>Glen Canyon Dam 格兰峡谷大坝</b> 游客中心，或绕道 <b>Coral Pink Sand Dunes 珊瑚粉沙丘</b> 州立公园。晚上如果不去 Omega Mart，可在主街散步看<b>百乐宫音乐喷泉</b>（免费）或安排自助 Buffet。"],
+  ]},
+  { num:"D7", date:"2026.07.10 周五", color:"#8e44ad", lodging:"毕晓普 / 猛犸湖", lodgingClass:"",
+    title:"赌城出发 · 穿越内华达荒漠 · 抵达猛犸湖",
+    weather:{date:"2026-07-10", place:"猛犸湖 / Bishop", lat:37.6480, lng:-118.9720, tip:"从荒漠到山地温差大，傍晚可能明显转凉。"},
+    highlights:[{t:"内华达荒漠",c:"hl-drive"},{t:"Indian Springs短停",c:"hl-stay"},{t:"Beatty休息",c:"hl-stay"},{t:"Tonopah午餐",c:"hl-food"},{t:"395号公路",c:"hl-drive"},{t:"猛犸湖",c:"hl-stay"}],
+    routePts:[{n:"拉斯维加斯",lat:36.1716,lng:-115.1391},{n:"Indian Springs",lat:36.5766,lng:-115.6700,dist:70},{n:"Beatty",lat:36.9086,lng:-116.7592,dist:115},{n:"Tonopah",lat:38.0672,lng:-117.2306,dist:150},{n:"Bishop",lat:37.3614,lng:-118.3997,dist:160},{n:"猛犸湖",lat:37.648,lng:-118.972,dist:65}],
+    events:[
+      ["08:00-09:00","70 km","<b>【自驾·US-95】</b>从拉斯维加斯出发北上，第一站到 <b>Indian Springs</b>，这是 US-95 正线上的短停点，可上洗手间、买咖啡，把车内水和零食摆好。"],
+      ["09:00-11:00","115 km","继续穿越内华达荒漠到 <b>Beatty</b>。Beatty 是小镇补给点，可短停换手；如要绕 <b>Rhyolite Ghost Town</b>，也从这里进出。"],
+      ["11:00-13:00","150 km","经 US-95 北上到 <b>Tonopah</b>，这里适合午餐、加油和长休息。荒漠段服务区少，看到补给点就不要硬撑。"],
+      ["13:00-15:30","160 km","<b>【US-6 西行】</b>从 Tonopah 转 US-6，经过 Coaldale Junction 一带进入更开阔的荒漠公路，随后接近加州东麓。中途设施少，出发前确认油量和水。"],
+      ["15:30-17:00","65 km","<b>【US-395】</b>经 <b>Bishop / 毕晓普</b> 北上，驶入内华达山脉东麓景观公路。Bishop 是最后一个很稳的补给点；如果全家疲劳，可直接住 Bishop，不必硬开到猛犸湖。"],
+      ["17:00-20:00","-","抵达后入住，在猛犸湖或毕晓普小镇用晚餐。今晚早休，为明天 Tioga Pass 翻山储备精力。"],
+      ["-","-","🔁 <b>备选/过路：</b>如 D6 晚上不去 Omega Mart、D7 能早出发，可绕道 <b>Death Valley 死亡谷</b> 打卡恶水盆地和 Zabriskie Point（夏季极热谨慎）。或经 <b>Rhyolite Ghost Town 幽灵鬼镇</b> 拍废墟大片。途中 <b>Tonopah</b> 有老派汽车旅馆和星空观测点。"],
+  ]},
+  { num:"D8", date:"2026.07.11 周六", color:"#d4442a", lodging:"埃尔波托尔 / 玛iposa", lodgingClass:"",
+    title:"翻越 Tioga Pass · 优胜美地核心谷地 · ⚠️ 查路况",
+    weather:{date:"2026-07-11", place:"优胜美地山谷", lat:37.7456, lng:-119.5936, tip:"山谷白天热、林荫处凉；同时关注山火烟雾和 Tioga 路况。"},
+    highlights:[{t:"⚠️查Tioga路况",c:"hl-drive"},{t:"Tioga Pass",c:"hl-drive"},{t:"Tenaya Lake",c:"hl-sight"},{t:"Tunnel View",c:"hl-sight"},{t:"酋长岩",c:"hl-sight"}],
+    routePts:[{n:"猛犸湖",lat:37.648,lng:-118.972},{n:"Tenaya Lake",lat:37.8306,lng:-119.4587,dist:64},{n:"优胜美地山谷",lat:37.7456,lng:-119.5936,dist:16},{n:"El Portal",lat:37.674,lng:-119.784,dist:48}],
+    events:[
+      ["08:00-12:00","128 km","<b>【自驾高光·CA-120 Tioga Pass】</b>从猛犸湖出发，⚠️ <b>出发前必须查 Tioga Pass 开放状态</b>（nps.gov/yose/planyourvisit/tioga.htm）。如关闭则整条路线需绕南边，行程会崩。走 120 号公路东门翻越内华达山脉，沿途停靠<b>图奥勒米草甸</b>、<b>Olmsted Point</b>以及<b>天那雅湖（Tenaya Lake）</b>。"],
+      ["12:00-13:00","-","在优胜美地山谷中心（Yosemite Valley Village）用午餐或吃自备路餐。"],
+      ["13:00-17:30","48 km","下午深度游览优胜美地山谷核心区：打卡经典的 <b>Tunnel View（隧道观景点）</b>；近距离观赏壮丽的<b>酋长岩（El Capitan）</b>及<b>新娘面纱瀑布</b>。下午5点半后出西门入住。<br>💰 优胜美地国家公园门票 $35/车（7天有效）。"],
+      ["-","-","🔁 <b>备选/过路：</b>如 Tioga Pass 关闭，需绕南边经 Bakersfield 进入（多 3-4 小时车程，整个行程节奏需重排）。谷内可选 <b>Mariposa Grove 巨杉林</b>（穿梭巴士可达），或 <b>Hetch Hetchy 水库步道</b>（人极少，安静）。"],
+  ]},
+  { num:"D9", date:"2026.07.12 周日", color:"#1a6b8a", lodging:"旧金山 (渔人码头/联合广场)", lodgingClass:"",
+    title:"冰川点/塔夫点 · 西行下山 · 抵达旧金山 · 九曲花街",
+    weather:{date:"2026-07-12", place:"旧金山", lat:37.7749, lng:-122.4194, tip:"旧金山夏天常有冷雾和大风，晚上一定备外套。"},
+    highlights:[{t:"⚠️查路况",c:"hl-drive"},{t:"冰川点/Taft Point",c:"hl-sight"},{t:"半圆顶全景",c:"hl-sight"},{t:"九曲花街",c:"hl-sight"}],
+    routePts:[{n:"El Portal",lat:37.674,lng:-119.784},{n:"Glacier Point",lat:37.730,lng:-119.573,dist:48},{n:"旧金山",lat:37.7749,lng:-122.4194,dist:304}],
+    events:[
+      ["08:30-11:30","48 km","<b>【自驾】</b>从西门重新入园。⚠️ <b>Glacier Point Road 经常季节性关闭</b>（修路/山火/积雪），出发前必须查 nps.gov/yose。如开放：盘山而上前往<b>冰川点（Glacier Point）</b>，居高临下俯瞰大山谷和半圆顶全景（游玩1.5小时）。<br>🔁 <b>如关闭，备用方案：Taft Point + Sentinel Dome</b>——Yosemite 真正封神级别步道，Taft Point 万丈悬崖裂缝比 Glacier Point 更震撼，中国游客极少知道。<br>💰 优胜美地门票 D8 已购，7天内有效，无需再付。"],
+      ["-","-","🔁 <b>备选/过路：</b>出山后可经 <b>Columbia State Historic Park 淘金历史小镇</b>（免费，穿19世纪服装合影），或在进入旧金山后去 <b>双子峰</b> 提前看夜景（D10 也有）。"],
+      ["11:30-15:30","304 km","<b>【自驾·CA-140/I-580】</b>一路下山离开山区，向西开往西海岸名城旧金山。"],
+      ["15:30-19:00","-","下午3点半左右通过海湾大桥进入旧金山。傍晚前往经典的<b>九曲花街（Lombard Street）</b>体验奇妙的倾斜盘山道，晚上在市区用晚餐。"],
+  ]},
+  { num:"D10", date:"2026.07.13 周一", color:"#e67e22", lodging:"旧金山 (连住)", lodgingClass:"",
+    title:"旧金山打卡 · 金门大桥 · 艺术宫 · 渔人码头 · 双子峰夜景",
+    weather:{date:"2026-07-13", place:"旧金山", lat:37.7749, lng:-122.4194, tip:"金门大桥和双子峰风大体感冷，按春秋装准备。"},
+    highlights:[{t:"金门大桥",c:"hl-sight"},{t:"艺术宫",c:"hl-sight"},{t:"渔人码头",c:"hl-food"},{t:"叮当车",c:"hl-sight"},{t:"双子峰全景",c:"hl-sight"},{t:"彩绘女士",c:"hl-sight"}],
+    routePts:[{n:"酒店",lat:37.7749,lng:-122.4194},{n:"金门大桥",lat:37.8075,lng:-122.4744,dist:8},{n:"艺术宫",lat:37.8025,lng:-122.4487,dist:5},{n:"渔人码头",lat:37.8100,lng:-122.4100,dist:8},{n:"双子峰",lat:37.7544,lng:-122.4477,dist:10}],
+    events:[
+      ["09:00-12:00","16 km","早上驱车前往<b>金门大桥（Golden Gate Bridge）</b>，导航到最佳摄影机位 <b>Battery Spencer</b> 拍摄大桥全景。11:00 前往罗马风情的<b>旧金山艺术宫（Palace of Fine Arts）</b>散步。"],
+      ["12:00-15:30","-","前往<b>渔人码头（Fisherman's Wharf / Pier 39）</b>。午餐品尝酸面包海鲜浓汤和大螃蟹。饭后带孩子看木栈道上成群晒太阳、鸣叫的野生海狮（游玩3.5小时，极其休闲）。"],
+      ["15:30-17:00","8 km","下午带孩子体验旧金山经典的<b>叮当车（Cable Car）</b>，或去联合广场逛街。<br>💰 叮当车单程 $8/人（5-17岁 $5），金门大桥/艺术宫/渔人码头/双子峰均免费参观。途中可顺路打卡 <b>Alamo Square</b>，看经典的<b>「彩绘女士」彩色维多利亚房子</b>（Full House 同款机位）。"],
+      ["17:00-19:00","10 km","🌅 傍晚驱车上<b>双子峰（Twin Peaks）</b>——旧金山城市全景天花板。日落、夜景、雾海三绝，360° 俯瞰整个旧金山湾区天际线，为旧金山之旅画上完美句号。"],
+      ["-","-","🔁 <b>备选/过路：</b>金门大桥北岸 <b>Muir Woods 红木国家纪念地</b>（$15/人，千年红木林，需预约停车），或 <b>Sausalito 海滨小镇</b> 坐渡轮回渔人码头。如对科学感兴趣可去金门公园 <b>California Academy of Sciences</b>（$45/人，水族馆+天文馆+热带雨林）。"],
+  ]},
+  { num:"D11", date:"2026.07.14 周二", color:"#2980b9", lodging:"蒙特雷 / 卡梅尔", lodgingClass:"",
+    title:"探秘硅谷 · 斯坦福大学 · 蒙特雷湾水族馆 · 卡梅尔",
+    weather:{date:"2026-07-14", place:"蒙特雷 / 卡梅尔", lat:36.6002, lng:-121.8947, tip:"海边多雾偏凉，水族馆和卡梅尔都适合带防风外套。"},
+    highlights:[{t:"斯坦福大学",c:"hl-sight"},{t:"蒙特雷水族馆",c:"hl-sight"},{t:"海獭/水母",c:"hl-sight"},{t:"Cannery Row",c:"hl-food"},{t:"卡梅尔",c:"hl-stay"}],
+    routePts:[{n:"旧金山",lat:37.7749,lng:-122.4194},{n:"斯坦福",lat:37.4275,lng:-122.1697,dist:60},{n:"蒙特雷湾水族馆",lat:36.6183,lng:-121.9018,dist:130},{n:"卡梅尔",lat:36.5552,lng:-121.9233,dist:8}],
+    events:[
+      ["08:30-10:00","60 km","<b>【自驾·US-101】</b>离开旧金山南下，前往<b>斯坦福大学（Stanford University）</b>。"],
+      ["10:00-12:00","-","<b>【斯坦福大学】</b>漫步标志性长廊、主四方院、纪念教堂与胡佛塔周边，节奏控制在2小时内，给下午水族馆留足时间。"],
+      ["12:00-13:45","130 km","<b>【自驾·US-101/CA-1】</b>从斯坦福出发前往蒙特雷半岛，在 Cannery Row 附近快速午餐。"],
+      ["13:45-17:30","8 km","<b>【蒙特雷湾水族馆 Monterey Bay Aquarium】</b>带孩子慢慢逛，重点看海獭、巨型海藻森林、深海水母和 Open Sea 大缸，预留约3.5-4小时。建议提前官网购票，停车选 Cannery Row 周边停车楼。<br>💰 水族馆门票约 $60/成人、$45/儿童，价格以官网为准。"],
+      ["17:30-19:00","8 km","傍晚开到<b>卡梅尔（Carmel-by-the-Sea）</b>入住，在小镇散步并用晚餐。17-Mile Drive 挪到明早，今天不赶海岸线。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果想补科技感，可把斯坦福压缩为1小时，顺路短停 <b>Apple Park Visitor Center</b>；但带孩子慢逛水族馆时不建议再加苹果总部。"],
+  ]},
+  { num:"D12", date:"2026.07.15 周三", color:"#16a085", lodging:"San Luis Obispo / Morro Bay", lodgingClass:"",
+    title:"17哩海滩 · 大苏尔 · McWay瀑布 · 象海豹 · 中海岸休整",
+    weather:{date:"2026-07-15", place:"Big Sur → San Luis Obispo", lat:35.2828, lng:-120.6596, tip:"海岸早晚凉，Big Sur 多雾多风；当天不赶到圣芭芭拉，节奏更稳。"},
+    highlights:[{t:"17哩海滩",c:"hl-sight"},{t:"大苏尔",c:"hl-drive"},{t:"Bixby大桥",c:"hl-sight"},{t:"McWay瀑布",c:"hl-sight"},{t:"象海豹",c:"hl-sight"},{t:"Morro Bay",c:"hl-stay"}],
+    routePts:[{n:"卡梅尔",lat:36.5552,lng:-121.9233},{n:"17哩海滩",lat:36.6002,lng:-121.8947,dist:18},{n:"Bixby大桥",lat:36.3716,lng:-121.9017,dist:40},{n:"McWay瀑布",lat:36.1578,lng:-121.671,dist:30},{n:"象海豹滩",lat:35.6634,lng:-121.266,dist:100},{n:"San Luis Obispo / Morro Bay",lat:35.28,lng:-120.66,dist:75}],
+    events:[
+      ["08:30-10:00","18 km","<b>【17哩海滩 17-Mile Drive】</b>从卡梅尔出发，早上先走高档私家海岸线，打卡孤独松、Spanish Bay、海边高尔夫球场和礁石海岸。<br>💰 17-Mile Drive 过路费约 $12/车。"],
+      ["10:00-12:00","70 km","<b>【自驾·CA-1 大苏尔】</b>驶入 1 号公路最震撼的悬崖海岸<b>大苏尔（Big Sur）</b>段。途中在<b>比克斯比大桥（Bixby Creek Bridge）</b>停靠拍照。"],
+      ["12:00-12:30","-","🆕 <b>McWay 瀑布（McWay Falls）</b>——Big Sur 必打卡！瀑布直接流进太平洋，美国西海岸经典明信片机位。停车后步行几分钟即可到达观景台。<br>💰 McWay Falls 所在 Julia Pfeiffer Burns 州立公园停车 $10/车，Piedras Blancas 象海豹滩免费，丹麦村免费。"],
+      ["12:30-13:30","-","继续沿悬崖海岸南下，在海景餐厅或路边补给点吃个简餐。"],
+      ["13:30-16:00","175 km","<b>【自驾·CA-1】</b>中途停靠 <b>Piedras Blancas</b>，看野生<b>象海豹</b>躺在沙滩上晒太阳（30分钟）。之后继续南下，避开傍晚继续赶往圣芭芭拉的疲劳段。"],
+      ["16:00-18:30","75 km","傍晚抵达 <b>San Luis Obispo / Morro Bay</b> 一带入住。推荐 Morro Bay 看大石头和海港日落，或住 San Luis Obispo 市中心，吃饭补给更方便。"],
+      ["-","-","🔁 <b>备选/过路：</b>Big Sur 往南可预约 <b>Hearst Castle 赫氏古堡</b>（$30/人，需提前订）；如果当天体力一般，直接跳过古堡，优先保证 Big Sur、McWay Falls 和象海豹。"],
+  ]},
+  { num:"D13", date:"2026.07.16 周四", color:"#e74c3c", lodging:"洛杉矶机场附近", lodgingClass:"last",
+    title:"丹麦村 · 圣芭芭拉 · Malibu海岸 · Santa Monica · LAX还车",
+    weather:{date:"2026-07-16", place:"Santa Monica / LAX", lat:34.0094, lng:-118.4973, tip:"海边傍晚偏凉，回 LAX 要预留洛杉矶晚高峰缓冲。"},
+    highlights:[{t:"丹麦村",c:"hl-food"},{t:"圣芭芭拉",c:"hl-sight"},{t:"Malibu海岸",c:"hl-sight"},{t:"Santa Monica",c:"hl-sight"},{t:"LAX还车",c:"hl-stay"},{t:"机场酒店",c:"hl-stay"}],
+    routePts:[{n:"San Luis Obispo / Morro Bay",lat:35.28,lng:-120.66},{n:"丹麦村",lat:34.5947,lng:-120.1387,dist:105},{n:"圣芭芭拉",lat:34.4208,lng:-119.6982,dist:65},{n:"Malibu海岸",lat:34.0356,lng:-118.6894,dist:125},{n:"Santa Monica",lat:34.0094,lng:-118.4973,dist:25},{n:"LAX租车点/机场酒店",lat:33.9416,lng:-118.4085,dist:18}],
+    events:[
+      ["09:00-10:30","105 km","<b>【自驾·US-101】</b>从 San Luis Obispo / Morro Bay 出发，前往满是北欧风车和童话木屋的<b>丹麦村（Solvang）</b>。"],
+      ["10:30-12:00","-","<b>【丹麦村】</b>轻松散步，买丹麦糕点和咖啡，不深度逛，给后面的圣芭芭拉和回洛杉矶留时间。"],
+      ["12:00-14:30","65 km","<b>【自驾·US-101】</b>前往极具西班牙殖民风情的海滨度假小镇<b>圣芭芭拉</b>。在市中心法院钟楼俯瞰红瓦白墙的城市全景，午餐可安排海边栈桥或市中心。"],
+      ["14:30-16:30","125 km","<b>【自驾·US-101 / CA-1】</b>沿海岸方向进入 <b>Malibu 马里布海岸</b>，选一个好停车的海边点短停看海，不做深度沙滩行程。"],
+      ["16:30-17:30","25 km","继续开到 <b>Santa Monica</b>，补第一天没去的海边打卡：Santa Monica Pier、海滩和第三街步行街择一，不要久逛。"],
+      ["17:30-18:30","18 km","<b>【LAX还车】</b>白天行程结束后直接开往 LAX 租车点还车，确认油量、里程、车损和收据。还车后乘酒店接驳车或短途打车前往 LAX 机场附近酒店入住。"],
+      ["18:30-21:00","-","入住后在机场酒店附近吃一顿轻松的告别晚餐，晚上整理行李。明早不再处理还车，直接去航站楼。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果当天从中海岸回洛杉矶堵车严重，就跳过 Malibu 或 Santa Monica，优先保证 18:30 前后还车。若全家还有体力，可在机场附近 <b>Manhattan Beach</b> 喝杯告别咖啡。"],
+  ]},
+  { num:"D14", date:"2026.07.17 周五", color:"#555", lodging:"飞机上 / 返回上海", lodgingClass:"fly",
+    title:"上午起飞 · 从 LAX 返回上海",
+    weather:{date:"2026-07-17", place:"LAX 洛杉矶机场", lat:33.9416, lng:-118.4085, tip:"早上去机场为主，关注机场周边交通和低云延误即可。"},
+    highlights:[{t:"✈️ 返程",c:"hl-stay"}],
+    routePts:[{n:"LAX",lat:33.9416,lng:-118.4085}],
+    events:[
+      ["07:40-10:40","-","早上抵达 LAX 航站楼办理柜台值机、行李托运与安检（预留约3小时）。<b>D14 上午 10:40 航班从 LAX 起飞</b>，返回上海。"],
+  ]},
+];
+
+const daySegs = [[0,11],[12,20],[21,43],[44,68],[69,80],[81,103],[104,127],[128,140],[141,159],[160,164],[165,179],[180,200],[201,224]];
+
+// ═══════════ FULL MAP ═══════════
+(function(){
+  if (typeof L === 'undefined') {
+    document.getElementById('full-map').innerHTML = '<div style="text-align:center;padding:80px 20px;color:#c75b2a;">⚠️ 地图组件加载失败<br><small>请检查网络连接后刷新页面</small></div>';
+    return;
+  }
+  try {
+    const map = L.map('full-map').setView([36.0, -117.5], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>', maxZoom:19
+    }).addTo(map);
+
+    // Main road route
+    L.polyline(navRoute, { color:'#1a6b8a', weight:4, opacity:0.75 }).addTo(map);
+
+    // Day-colored overlays (approximate day boundaries in navRoute)
+    const dayColors = ['#2d6a4f','#e67e22','#9b59b6','#8e44ad','#c75b2a','#8b5e3c','#1a6b8a','#d4442a','#1a6b8a','#e67e22','#2980b9','#16a085','#e74c3c'];
+
+    daySegs.forEach(([s,e],di)=>{
+      if (s >= navRoute.length) return;
+      const seg = navRoute.slice(s, e+1);
+      if (seg.length < 2) return;
+      L.polyline(seg, { color:dayColors[di], weight:2.5, opacity:0.55, dashArray:'6,3' }).addTo(map);
+    });
+
+    // Markers
+    const mc = { start:'#2d6a4f',end:'#2d6a4f',park:'#c75b2a',sight:'#e67e22',city:'#1a6b8a',culture:'#9b59b6' };
+    function mkIcon(t){ const c=mc[t]||'#e67e22'; return L.divIcon({html:`<svg width="18" height="26" viewBox="0 0 18 26"><path d="M9 0C4 0 0 4 0 9c0 6.75 9 16 9 16s9-9.25 9-16C18 4 13.97 0 9 0z" fill="${c}" stroke="#fff" stroke-width="1.5"/><circle cx="9" cy="8" r="3" fill="#fff"/></svg>`,className:'',iconSize:[18,26],iconAnchor:[9,26],popupAnchor:[0,-28]}); }
+    waypoints.forEach(p=>{
+      const m = L.marker([p.lat,p.lng],{icon:mkIcon(p.type)}).addTo(map);
+      m.bindPopup(`<b>${p.name}</b><br><span style="color:#888;font-size:.8rem">${p.day}${p.dist?' · '+p.dist+' km':''}</span>`);
+    });
+
+    map.fitBounds(L.latLngBounds(navRoute.map(p=>[p[0],p[1]])),{padding:[30,30]});
+  } catch(e){
+    document.getElementById('full-map').innerHTML = '<div style="text-align:center;padding:80px 20px;color:#c75b2a;">⚠️ 地图初始化失败<br><small>请检查网络连接后刷新页面</small></div>';
+  }
+})();
+
+// ═══════════ DAILY CARDS ═══════════
+const container = document.getElementById('days');
+const dayMaps = {};
+
+function weatherUrl(w) {
+  return `https://forecast.weather.gov/MapClick.php?lat=${w.lat}&lon=${w.lng}`;
+}
+
+function weatherCodeText(code) {
+  const map = {
+    0:'晴朗', 1:'大部晴朗', 2:'局部多云', 3:'多云',
+    45:'雾', 48:'冻雾', 51:'小毛毛雨', 53:'毛毛雨', 55:'较强毛毛雨',
+    61:'小雨', 63:'雨', 65:'大雨', 71:'小雪', 73:'雪', 75:'大雪',
+    80:'阵雨', 81:'阵雨', 82:'强阵雨', 95:'雷阵雨', 96:'雷阵雨伴冰雹', 99:'强雷阵雨伴冰雹'
+  };
+  return map[code] || '天气待确认';
+}
+
+function renderWeatherShell(w, i) {
+  if (!w) return '';
+  return `
+    <div class="weather-card" id="weather-${i}">
+      <div class="weather-place">🌤️ ${w.place}<span>${w.date}</span></div>
+      <div class="weather-main">
+        <span class="weather-pill">预报读取中</span>
+        <span class="weather-note">${w.tip}</span>
+      </div>
+      <a class="weather-link" href="${weatherUrl(w)}" target="_blank" rel="noopener">实时天气</a>
+    </div>`;
+}
+
+async function loadWeather(i) {
+  const w = days[i].weather;
+  const el = document.getElementById('weather-'+i);
+  if (!w || !el || el.dataset.loaded) return;
+  el.dataset.loaded = '1';
+  const api = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,wind_speed_10m_max&temperature_unit=celsius&wind_speed_unit=kmh&timezone=auto&start_date=${w.date}&end_date=${w.date}`;
+  try {
+    const res = await fetch(api);
+    if (!res.ok) throw new Error('forecast unavailable');
+    const data = await res.json();
+    const d = data.daily;
+    if (!d || !d.time || !d.time.length) throw new Error('empty forecast');
+    const rain = d.precipitation_probability_max?.[0];
+    const uv = d.uv_index_max?.[0];
+    const wind = d.wind_speed_10m_max?.[0];
+    el.querySelector('.weather-main').innerHTML = `
+      <span class="weather-pill">${weatherCodeText(d.weather_code[0])}</span>
+      <span class="weather-pill">${Math.round(d.temperature_2m_min[0])}-${Math.round(d.temperature_2m_max[0])}°C</span>
+      ${rain==null?'':`<span class="weather-pill">降水 ${rain}%</span>`}
+      ${uv==null?'':`<span class="weather-pill">UV ${Math.round(uv)}</span>`}
+      ${wind==null?'':`<span class="weather-pill">风 ${Math.round(wind)} km/h</span>`}
+      <span class="weather-note">${w.tip}</span>`;
+  } catch(e) {
+    el.querySelector('.weather-main').innerHTML = `
+      <span class="weather-pill">临近出发自动更新</span>
+      <span class="weather-note">${w.tip}</span>`;
+  }
+}
+
+days.forEach((d,i)=>{
+  const div = document.createElement('div');
+  div.className = 'day'+(i===0?' open':'');
+  div.id = 'day-'+i;
+
+  const hasRoute = d.routePts && d.routePts.length >= 2;
+  const totalDist = hasRoute ? d.routePts.reduce((s,p)=>s+(p.dist||0),0) : 0;
+
+  const rm = hasRoute
+    ? `<div class="day-route-map"><div class="day-map" id="day-map-${i}"></div></div>`
+    : '';
+
+  div.innerHTML = `
+    <div class="day-header" onclick="this.parentElement.classList.toggle('open');initDM(${i});loadWeather(${i})">
+      <div class="day-num" style="background:${d.color}">${d.num}</div>
+      <div class="day-info"><div class="day-date">${d.date || ''}</div><h2>${d.title}</h2></div>
+      <div class="day-lodging ${d.lodgingClass}">${d.lodging}</div>
+      <div class="day-arrow">▾</div>
+    </div>
+    <div class="day-body">
+      ${rm}
+      ${renderWeatherShell(d.weather, i)}
+      <div class="day-highlights">
+        ${d.highlights.map(h=>`<span class="hl-tag ${h.c}">${h.t}</span>`).join('')}
+        ${totalDist>0?`<span class="hl-tag hl-drive">🚗 ${totalDist} km</span>`:''}
+      </div>
+      <div>${d.events.map(e=>`
+        <div class="timeline-row">
+          <div class="timeline-time">${e[0]}</div>
+          <div class="timeline-miles">${e[1]==='-'?'':e[1]}</div>
+          <div class="timeline-desc">${e[2]}</div>
+        </div>`).join('')}</div>
+    </div>`;
+  container.appendChild(div);
+
+  if (i===0 && hasRoute) setTimeout(()=>{ initDM(0); loadWeather(0); }, 300);
+});
+
+function initDM(i) {
+  if (typeof L === 'undefined') return;
+  const mid = 'day-map-'+i;
+  if (dayMaps[mid]) { dayMaps[mid].invalidateSize(); return; }
+  const el = document.getElementById(mid);
+  if (!el || el._initialized) return;
+  el._initialized = true;
+  const d = days[i];
+  if (!d.routePts || d.routePts.length < 2) return;
+
+  try {
+    const map = L.map(el, { attributionControl:false, zoomControl:false, dragging:false, scrollWheelZoom:false })
+      .setView([d.routePts[0].lat, d.routePts[0].lng], 9);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'', maxZoom:19 }).addTo(map);
+
+    // Match each route point inside the current day's navRoute slice. This
+    // prevents repeated places like Las Vegas from snapping to prior days.
+    let seg = [];
+    const dayBounds = daySegs[i];
+    let searchFrom = dayBounds ? dayBounds[0] : 0;
+    const searchTo = dayBounds ? Math.min(dayBounds[1], navRoute.length - 1) : navRoute.length - 1;
+    d.routePts.forEach((rp, idx)=>{
+      let bestIdx = searchFrom;
+      let bestDist = Infinity;
+      for (let j = searchFrom; j <= searchTo; j++) {
+        const p = navRoute[j];
+        const dist = Math.hypot(p[0]-rp.lat, p[1]-rp.lng);
+        if (dist < bestDist) { bestDist = dist; bestIdx = j; }
+      }
+      if (idx === 0) {
+        seg = [navRoute[bestIdx]];
+      } else if (bestIdx >= searchFrom) {
+        seg = seg.concat(navRoute.slice(searchFrom + 1, bestIdx + 1));
+      }
+      searchFrom = bestIdx;
+    });
+    if (seg.length >= 2) {
+      L.polyline(seg, { color:d.color, weight:2.5, opacity:0.8 }).addTo(map);
+    } else {
+      L.polyline(d.routePts.map(p=>[p.lat,p.lng]), { color:d.color, weight:2.5, opacity:0.8 }).addTo(map);
+    }
+
+    d.routePts.forEach(p=>{
+      L.circleMarker([p.lat,p.lng], { radius:5, color:d.color, fillColor:d.color, fillOpacity:1, weight:2 }).addTo(map)
+        .bindTooltip(`<b>${p.n}</b>${p.dist?' · '+p.dist+' km':''}`, { direction:'top' });
+    });
+
+    const bounds = seg.length>=2 ? L.latLngBounds(seg.map(p=>[p[0],p[1]])) : L.latLngBounds(d.routePts.map(p=>[p.lat,p.lng]));
+    map.fitBounds(bounds, { padding:[25,25] });
+    dayMaps[mid] = map;
+  } catch(e) { console.error('Day map error:', e); }
+}
+</script>
+</body>
+</html>
