@@ -162,27 +162,23 @@
 // Format: [lat, lng, dayLabel?] — waypoints follow real road alignments
 
 const navRoute = [
-  // ── D1: LAX arrival → E Line hotel → Science Center → Hollywood → Griffith by transit/rideshare ──
+  // ── D1: LAX arrival → rental car → Science Center → Hollywood → Griffith → Universal City hotel ──
   [33.9416,-118.4085], // LAX
-  [33.95,-118.40], [33.98,-118.36],
-  [34.0486,-118.2588], // 7th St / Metro Center, E Line hotel area
-  [34.0320,-118.2700], [34.0205,-118.2860], // Expo Park / California Science Center
-  [34.0407,-118.2468], // Downtown transfer
+  [33.95,-118.40], [33.98,-118.36], // rental car exit / I-105 area
+  [34.0205,-118.2860], // Expo Park / California Science Center
+  [34.0407,-118.2468], // Downtown connector
   [34.0617,-118.2990], [34.0928,-118.3287], // Hollywood Walk of Fame
   [34.1050,-118.3150], [34.1184,-118.3004], // Griffith Observatory
-  [34.0486,-118.2588], // back to E Line hotel area
+  [34.1250,-118.3300], [34.1381,-118.3534], // Universal / Studio City hotel area
 
-  // ── D2: E Line hotel → Universal Studios Hollywood full day by transit/rideshare ──
-  [34.0486,-118.2588],
-  [34.0500,-118.2550], [34.0560,-118.2470], // Metro transfer toward B Line
-  [34.0750,-118.2910], [34.0983,-118.3287],
+  // ── D2: Universal City hotel → Universal Studios Hollywood full day ──
   [34.1381,-118.3534], // Universal / Studio City station
   [34.1361,-118.3554], // Universal Studios Hollywood
-  [34.0983,-118.3287], [34.0486,-118.2588], // back to hotel
+  [34.1381,-118.3534], // back to hotel
 
-  // ── D3: LAX rental car center → Barstow → Vegas (I-15) ──
-  [33.9416,-118.4085], // LAX rental car center
-  [34.05,-118.20], [34.10,-117.95], [34.15,-117.65],
+  // ── D3: Universal City / Studio City → Barstow → Vegas (CA-134/I-210/I-15) ──
+  [34.1381,-118.3534], // Universal / Studio City hotel
+  [34.15,-118.25], [34.16,-118.05], [34.15,-117.80],
   [34.30,-117.45], [34.50,-117.25], [34.60,-117.10],
   [34.80,-117.00], [34.90,-116.95],
   [34.90,-117.02], [34.89,-117.05], // Barstow
@@ -335,8 +331,8 @@ const navRoute = [
 
 // Key waypoints
 const waypoints = [
-  { name:"LAX 洛杉矶机场", lat:33.9416, lng:-118.4085, type:"start", day:"D1 / D3取车" },
-  { name:"E Line 沿线酒店区", lat:34.0486, lng:-118.2588, type:"city", day:"D1-D2" },
+  { name:"LAX 洛杉矶机场", lat:33.9416, lng:-118.4085, type:"start", day:"D1取车" },
+  { name:"Universal City / Studio City 酒店区", lat:34.1381, lng:-118.3534, type:"city", day:"D1-D2" },
   { name:"好莱坞星光大道", lat:34.0928, lng:-118.3287, type:"culture", day:"D1" },
   { name:"圣莫尼卡海滩", lat:34.0094, lng:-118.4973, type:"sight", day:"D13", dist:24 },
   { name:"加州科学中心 / USC", lat:34.0205, lng:-118.2860, type:"culture", day:"D1", dist:24 },
@@ -377,51 +373,50 @@ const waypoints = [
 
 // ═══════════ DAILY ITINERARY ═══════════
 const days = [
-  { num:"D1", date:"2026.07.04 周六", color:"#2d6a4f", lodging:"洛杉矶 E Line 附近", lodgingClass:"",
-    title:"落地洛杉矶 · 科学中心 · 好莱坞 · 格里菲斯天文台",
+  { num:"D1", date:"2026.07.04 周六", color:"#2d6a4f", lodging:"Universal City / Studio City", lodgingClass:"",
+    title:"落地洛杉矶 · LAX取车 · 科学中心 · 好莱坞 · 天文台",
     weather:{date:"2026-07-04", place:"洛杉矶市区 / Hollywood", lat:34.0522, lng:-118.2437, tip:"白天防晒补水，天文台傍晚有风；落地日强度高，按体力删减。"},
-    highlights:[{t:"08:20抵达LAX",c:"hl-stay"},{t:"不取车",c:"hl-stay"},{t:"科学中心",c:"hl-sight"},{t:"好莱坞短停",c:"hl-sight"},{t:"天文台夜景",c:"hl-sight"},{t:"公共交通/打车",c:"hl-drive"}],
-    routePts:[{n:"LAX",lat:33.9416,lng:-118.4085},{n:"E Line酒店区",lat:34.0486,lng:-118.2588},{n:"加州科学中心",lat:34.0205,lng:-118.2860},{n:"好莱坞星光大道",lat:34.0928,lng:-118.3287},{n:"格里菲斯天文台",lat:34.1184,lng:-118.3004},{n:"E Line酒店区",lat:34.0486,lng:-118.2588}],
+    highlights:[{t:"08:20抵达LAX",c:"hl-stay"},{t:"LAX取车",c:"hl-stay"},{t:"科学中心",c:"hl-sight"},{t:"好莱坞短停",c:"hl-sight"},{t:"天文台夜景",c:"hl-sight"},{t:"环球附近住宿",c:"hl-drive"}],
+    routePts:[{n:"LAX取车",lat:33.9416,lng:-118.4085},{n:"加州科学中心",lat:34.0205,lng:-118.2860,dist:24},{n:"好莱坞星光大道",lat:34.0928,lng:-118.3287,dist:16},{n:"格里菲斯天文台",lat:34.1184,lng:-118.3004,dist:8},{n:"Universal City / Studio City酒店",lat:34.1381,lng:-118.3534,dist:10}],
     events:[
       ["08:20-11:30","-","<b>【✈️ 落地】</b>航班降落 LAX，办理入境、提取行李。"],
-      ["11:30-12:45","公交/打车","<b>【不取车】</b>先从 LAX 前往 <b>Metro E Line 沿线酒店</b>寄存行李/办理入住。推荐住 7th St/Metro、Pico、Expo Park/USC、Culver City 或 Santa Monica 站附近，优先选步行 5-10 分钟到站的酒店。"],
-      ["12:45-13:30","Metro E Line","乘 E Line 前往 <b>Expo Park/USC</b>，午餐从简，进入加州科学中心。"],
+      ["11:30-12:30","-","<b>【LAX取车】</b>直接在 LAX 租车中心取中大型 SUV，检查胎压、备胎/补胎工具、油量和车身划痕。D1-D2 都有车，D3 不用再回机场取车。"],
+      ["12:30-13:30","24 km","<b>【自驾】</b>从 LAX 前往 <b>Expo Park / 加州科学中心</b>，午餐从简。科学中心停车按现场收费，优先选官方停车场，别把包留在车内。"],
       ["13:30-16:30","-","<b>【🚀 加州科学中心】</b>重点看航天、生态和互动展。落地日不贪多，孩子喜欢就多停，不建议再塞自然历史博物馆。<br>💰 常设展免费，特殊展/IMAX/奋进号相关预约以官网为准。"],
-      ["16:30-17:30","Metro/打车","前往 <b>Hollywood / 好莱坞星光大道</b>。这段建议直接短途打车或 Metro 换乘，别把体力耗在转车上。"],
+      ["16:30-17:30","16 km","开车前往 <b>Hollywood / 好莱坞星光大道</b>。尽量直接停到 Hollywood & Highland / Ovation Hollywood 周边停车楼，路边停车不要纠结太久。"],
       ["17:30-18:15","-","<b>【好莱坞短停】</b>轻量打卡 Hollywood Walk of Fame、TCL 中国剧院手印、Dolby Theatre 外观。这里不久逛，主要为了孩子到此一游。"],
-      ["18:15-20:30","打车/公交","前往 <b>格里菲斯天文台</b> 看 Hollywood Sign、洛杉矶城市夜景和天文展厅。7/4 晚上人流可能大，如果上山交通/停车接驳混乱，就改在 Hollywood 早点吃饭回酒店。"],
-      ["20:30-22:00","打车/Metro","返回 E Line 沿线酒店休息。<br>💰 今日不产生租车和停车费；公共交通可用 TAP 卡/手机交通卡，跨区晚间移动优先打车。"],
-      ["-","-","🔁 <b>备选/过路：</b>如果入境太慢或全家犯困，D1 只保留科学中心 + 酒店休息；好莱坞/天文台可放弃，D13 或下次再补。"],
+      ["18:15-20:30","8 km","前往 <b>格里菲斯天文台</b> 看 Hollywood Sign、洛杉矶城市夜景和天文展厅。7/4 晚上人流可能大，如果上山停车/接驳混乱，就改在 Hollywood 早点吃饭回酒店。"],
+      ["20:30-21:15","10 km","入住 <b>Universal City / Studio City</b> 一带酒店。<br>💰 今日开始产生租车和酒店停车费；好处是 D1/D2/D3 交通更省心，尤其 D3 不用绕回 LAX。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果入境太慢或全家犯困，D1 只保留取车 + 科学中心 + 环球附近酒店休息；好莱坞/天文台可放弃，D13 或下次再补。"],
   ]},
-  { num:"D2", date:"2026.07.05 周日", color:"#e67e22", lodging:"洛杉矶 E Line 附近 (连住)", lodgingClass:"",
+  { num:"D2", date:"2026.07.05 周日", color:"#e67e22", lodging:"Universal City / Studio City (连住)", lodgingClass:"",
     title:"环球影城 Hollywood 全天 · Nintendo World · 影城巴士",
     weather:{date:"2026-07-05", place:"Universal Studios Hollywood", lat:34.1361, lng:-118.3554, tip:"暑期排队长，白天防晒补水；夜间离园人多，返程别拖太晚。"},
-    highlights:[{t:"环球影城",c:"hl-sight"},{t:"Nintendo World",c:"hl-sight"},{t:"Studio Tour",c:"hl-sight"},{t:"全天项目",c:"hl-drive"},{t:"不租车",c:"hl-stay"}],
-    routePts:[{n:"E Line酒店区",lat:34.0486,lng:-118.2588},{n:"Universal / Studio City",lat:34.1381,lng:-118.3534},{n:"环球影城",lat:34.1361,lng:-118.3554},{n:"E Line酒店区",lat:34.0486,lng:-118.2588}],
+    highlights:[{t:"环球影城",c:"hl-sight"},{t:"Nintendo World",c:"hl-sight"},{t:"Studio Tour",c:"hl-sight"},{t:"全天项目",c:"hl-drive"},{t:"住得近",c:"hl-stay"}],
+    routePts:[{n:"Universal City / Studio City酒店",lat:34.1381,lng:-118.3534},{n:"环球影城",lat:34.1361,lng:-118.3554,dist:2},{n:"Universal City / Studio City酒店",lat:34.1381,lng:-118.3534,dist:2}],
     events:[
-      ["08:00-09:00","Metro/打车","从 E Line 沿线酒店出发，前往 <b>Universal / Studio City</b>。可 Metro 换乘 B Line 后坐免费接驳上山；6个人如果早晨想省力，也可以直接打车。"],
+      ["08:00-09:00","步行/酒店接驳/短途开车","从 Universal City / Studio City 酒店前往环球影城。若酒店在步行或接驳范围内，优先不开车；如果酒店稍远，就开车进环球停车楼。"],
       ["09:00-12:30","-","<b>【环球影城上半场】</b>优先排热门项目：<b>Super Nintendo World</b>、Harry Potter、Transformers / Jurassic World 等。暑期周日人多，入园后先看 App 排队时间。"],
       ["12:30-13:30","-","园区午餐。餐厅排队也会长，错峰吃饭比正点硬排舒服。"],
       ["13:30-17:30","-","<b>【Studio Tour + 下半场】</b>安排经典 <b>Studio Tour 影城巴士</b>，再补 Simpsons、Minions、WaterWorld 等表演/项目。带孩子别强刷全项目，优先保体力。"],
       ["17:30-20:30","-","晚餐 + 查漏补缺。环球 Hollywood 通常没有迪士尼那种固定烟花，7/5 按无烟花规划；若官网当天有特别活动，再临时加。"],
-      ["20:30-21:30","Metro/打车","离园返回 E Line 沿线酒店。明早去 LAX 机场租车中心取车，正式开始自驾段。"],
-      ["-","-","🔁 <b>备选/过路：</b>如果环球当天营业到较晚，建议 20:00-21:00 之间撤；不要玩到极限，D3 还要取车并开去拉斯维加斯。"],
+      ["20:30-21:00","步行/接驳/短途开车","离园返回 Universal City / Studio City 酒店。车已经在手，明早从酒店直接出发去拉斯维加斯。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果环球当天营业到较晚，建议 20:00-21:00 之间撤；不要玩到极限，D3 还要长途开去拉斯维加斯。"],
   ]},
   { num:"D3", date:"2026.07.06 周一", color:"#9b59b6", lodging:"拉斯维加斯大道", lodgingClass:"",
-    title:"LAX机场取车 · 横穿大漠 · 七彩巨石 · 抵达赌城 · 实弹射击",
+    title:"环球附近出发 · 横穿大漠 · 七彩巨石 · 抵达赌城 · 实弹射击",
     weather:{date:"2026-07-06", place:"拉斯维加斯", lat:36.1716, lng:-115.1391, tip:"荒漠高温日，车上备足水，避免正午长时间暴晒。"},
-    highlights:[{t:"机场取车",c:"hl-stay"},{t:"沙漠公路",c:"hl-drive"},{t:"Peggy Sue's",c:"hl-food"},{t:"七彩巨石",c:"hl-sight"},{t:"山姆补给",c:"hl-stay"},{t:"实弹射击",c:"hl-sight"},{t:"Fremont老街",c:"hl-sight"}],
-    routePts:[{n:"LAX取车",lat:33.9416,lng:-118.4085},{n:"巴斯托 Barstow",lat:34.90,lng:-117.02,dist:210},{n:"七彩巨石",lat:36.00,lng:-115.35,dist:250},{n:"山姆会员店",lat:36.1067,lng:-115.2070,dist:20},{n:"拉斯维加斯",lat:36.1716,lng:-115.1391,dist:10}],
+    highlights:[{t:"酒店直接出发",c:"hl-stay"},{t:"沙漠公路",c:"hl-drive"},{t:"Peggy Sue's",c:"hl-food"},{t:"七彩巨石",c:"hl-sight"},{t:"山姆补给",c:"hl-stay"},{t:"实弹射击",c:"hl-sight"},{t:"Fremont老街",c:"hl-sight"}],
+    routePts:[{n:"Universal City / Studio City酒店",lat:34.1381,lng:-118.3534},{n:"巴斯托 Barstow",lat:34.90,lng:-117.02,dist:175},{n:"七彩巨石",lat:36.00,lng:-115.35,dist:250},{n:"山姆会员店",lat:36.1067,lng:-115.2070,dist:20},{n:"拉斯维加斯",lat:36.1716,lng:-115.1391,dist:10}],
     events:[
-      ["07:30-08:45","公共交通/打车","酒店退房，从 E Line 沿线酒店前往 <b>LAX 机场租车中心</b>。行李多的话建议直接打车/网约车；想省预算可用 Metro + LAX 接驳组合。"],
-      ["08:45-09:45","-","<b>【机场取车】</b>在 LAX 租车中心办理取车，检查中大型 SUV 车况、胎压、备胎/补胎工具和油量，正式开启自驾大环线。"],
-      ["09:45-12:30","210 km","<b>【自驾·I-105/I-605/I-15N】</b>从 LAX 出发，绕出洛杉矶都会区后驶上 I-15 高速，横穿荒漠直奔经典公路中转站巴斯托（Barstow）。"],
-      ["12:30-13:30","-","在巴斯托复古餐厅 <b>Peggy Sue's Diner</b> 享用美式经典公路午餐（人均约 $15–20）。"],
+      ["08:00-08:30","-","酒店退房，把行李装车，检查油量、水、零食和导航。车已经在手，不再回 LAX 取车。"],
+      ["08:30-11:15","175 km","<b>【自驾·CA-134/I-210/I-15N】</b>从 Universal City / Studio City 出发，绕开 LAX，直接穿出洛杉矶都会区后上 I-15，前往经典公路中转站巴斯托（Barstow）。"],
+      ["11:15-12:15","-","在巴斯托复古餐厅 <b>Peggy Sue's Diner</b> 享用美式经典公路午餐（人均约 $15–20）。"],
       ["13:30-17:00","250 km","<b>【自驾·I-15N】</b>继续开往 Vegas，途中在沙漠路边打卡网红艺术巨石<b>七彩巨石（Seven Magic Mountains）</b>（免费，游玩30分钟）。下午5点前抵达拉斯维加斯。"],
       ["17:00-17:45","20 km","<b>【山姆会员店补给】</b>先去拉斯维加斯 <b>Sam's Club 山姆会员店</b>采购后续荒漠路段补给：整箱水、运动饮料、零食、水果、防晒和车上纸巾垃圾袋等。"],
       ["17:45-18:15","10 km","开回拉斯维加斯大道酒店办理入住，放行李、稍作休整。"],
       ["18:15-20:00","-","<b>【拉斯维加斯实弹射击体验】</b>前往市区室内靶场体验手枪/步枪套餐。建议提前预约傍晚时段，随身带护照或有效证件，全程听从教练安全指引；不参与的人可在酒店休息。"],
-      ["20:00-21:30","-","🌃 晚上前往 <b>Fremont Street（弗里蒙特老街）</b>观赏霓虹 LED 天幕（免费），在附近享用特色晚餐。如果还想体验拉斯维加斯的顶级娱乐，可改看太阳马戏团经典水上大秀 <b>「O Show」</b>（Bellagio 酒店，需提前购票），但机场取车 + 长途自驾 + 补给 + 射击 + O Show 同晚会比较赶。之后回酒店休息，明早出发大峡谷。"],
+      ["20:00-21:30","-","🌃 晚上前往 <b>Fremont Street（弗里蒙特老街）</b>观赏霓虹 LED 天幕（免费），在附近享用特色晚餐。如果还想体验拉斯维加斯的顶级娱乐，可改看太阳马戏团经典水上大秀 <b>「O Show」</b>（Bellagio 酒店，需提前购票），但长途自驾 + 补给 + 射击 + O Show 同晚会比较赶。之后回酒店休息，明早出发大峡谷。"],
       ["-","-","🔁 <b>备选/过路：</b>I-15 途中可拐入 <b>Calico Ghost Town 鬼镇</b>（$8/人，西部淘金遗迹），或在 <b>Mojave National Preserve</b> 周边短停看荒漠景观。不看 O Show 可去 <b>Bellagio 植物园</b>（免费）或 <b>Mirage 火山秀</b>（免费）。"],
   ]},
   { num:"D4", date:"2026.07.07 周二", color:"#c75b2a", lodging:"图萨扬 / 大峡谷园内木屋", lodgingClass:"",
@@ -563,7 +558,7 @@ const days = [
   ]},
 ];
 
-const daySegs = [[0,11],[12,20],[21,43],[44,68],[69,80],[81,103],[104,127],[128,140],[141,159],[160,164],[165,179],[180,200],[201,224]];
+const daySegs = [[0,10],[11,13],[14,36],[37,61],[62,73],[74,96],[97,120],[121,133],[134,152],[153,157],[158,172],[173,193],[194,217]];
 
 // ═══════════ FULL MAP ═══════════
 (function(){
