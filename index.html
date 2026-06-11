@@ -41,12 +41,10 @@
   .day.open .day-body { display:block; }
   .day-route-map { padding:0; border-bottom:1px solid #f0ebe0; }
   .day-route-map .day-map { height:200px; width:100%; background:#fdfaf6; }
-  .static-map { width:100%; background:#eef6f7; border-bottom:1px solid #f0ebe0; overflow:hidden; }
-  .static-map svg { display:block; width:100%; height:auto; min-height:210px; }
-  .map-label { font:700 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#263238; }
-  .map-small { font:600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#546e7a; }
-  .map-pin { fill:#c75b2a; stroke:#fff; stroke-width:2; }
-  .map-route { fill:none; stroke:#e67e22; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:8 8; }
+  .static-map { width:100%; background:#eef6f7; border-bottom:1px solid #f0ebe0; overflow:hidden; padding:10px; text-align:center; }
+  .static-map img { display:block; width:100%; max-width:600px; aspect-ratio:600/574; height:auto; margin:0 auto; object-fit:contain; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,.12); }
+  .static-map-caption { margin-top:6px; font-size:.68rem; color:var(--muted); }
+  .static-map-caption a { color:var(--accent); font-weight:700; text-decoration:none; }
   .day-highlights { display:flex; flex-wrap:wrap; gap:6px; padding:10px 16px 12px; background:#fdfaf6; border-top:1px solid #f0ebe0; }
   .hl-tag { font-size:.7rem; font-weight:600; padding:2px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px; }
   .hl-sight { background:#dce8d0; color:#3d5a1a; } .hl-food { background:#f5e0d0; color:#8b4513; }
@@ -81,7 +79,7 @@
     .hero .stat-label { font-size:.58rem; letter-spacing:0; }
     .map-section h2 { padding-top:8px; font-size:.88rem; }
     .map-hint { font-size:.62rem; padding-bottom:6px; }
-    #full-map { height:230px; } .day-map { height:150px; } .static-map svg { min-height:170px; }
+    #full-map { height:230px; } .day-map { height:150px; } .static-map { padding:6px; }
     .legend { gap:8px; padding:6px 10px 4px; font-size:.62rem; }
     .container { padding:12px 12px 44px; }
     .section-title { font-size:1rem; margin:4px 0 10px; }
@@ -651,28 +649,13 @@ function renderWeatherShell(w, i) {
 
 function renderStaticMap(kind) {
   if (kind !== 'sf-d10') return '';
+  const src = 'https://img.meilvtong.com/dataHouse2/US//month_2_2203/22031812129bd7ea7013ff4cec.png';
   return `
-    <div class="static-map" aria-label="旧金山 D10 景点静态示意图">
-      <svg viewBox="0 0 920 330" role="img" aria-labelledby="sf-d10-title">
-        <title id="sf-d10-title">旧金山 D10 景点静态示意图</title>
-        <rect width="920" height="330" fill="#eef6f7"/>
-        <path d="M0 45 C120 20 230 28 340 56 C455 86 510 60 620 42 C720 25 820 40 920 18 L920 330 L0 330 Z" fill="#d7edf0"/>
-        <path d="M108 64 C150 95 168 136 155 183 C143 227 175 270 232 290 C314 318 458 312 536 280 C604 252 640 210 626 166 C612 124 558 104 500 88 C407 62 306 72 238 54 C188 41 145 38 108 64 Z" fill="#f7efe2" stroke="#d8c6ad" stroke-width="2"/>
-        <path d="M650 96 C700 80 760 92 812 126 C858 156 890 204 920 252 L920 330 L650 330 Z" fill="#bfe2e6"/>
-        <path d="M98 60 C74 43 46 39 18 51" stroke="#d4442a" stroke-width="5" stroke-linecap="round"/>
-        <path class="map-route" d="M86 84 C120 96 146 116 166 142 C192 132 229 122 270 114 C326 102 374 106 420 126 C458 143 506 144 550 135 C530 164 504 190 464 208 C416 230 364 238 308 230 C306 256 286 278 250 294"/>
-        <path d="M150 185 C190 175 240 176 286 190 C342 207 396 204 450 186 C498 170 548 168 605 184" fill="none" stroke="#b7a88f" stroke-width="2" opacity=".55"/>
-        <text x="28" y="28" class="map-label">D10 旧金山静态参考图</text>
-        <text x="28" y="46" class="map-small">金门大桥 → 艺术宫 → 渔人码头 / Pier 39 → 叮当车 / 联合广场 → 彩绘女士 → 双子峰</text>
-
-        <circle class="map-pin" cx="86" cy="84" r="8"/><text x="30" y="108" class="map-label">金门大桥</text><text x="30" y="123" class="map-small">Battery Spencer / 桥景</text>
-        <circle class="map-pin" cx="166" cy="142" r="8"/><text x="174" y="140" class="map-label">艺术宫</text><text x="174" y="155" class="map-small">Palace of Fine Arts</text>
-        <circle class="map-pin" cx="270" cy="114" r="8"/><text x="278" y="111" class="map-label">渔人码头</text><text x="278" y="126" class="map-small">Pier 39 / 海狮 / 午餐</text>
-        <circle class="map-pin" cx="420" cy="126" r="8"/><text x="428" y="124" class="map-label">叮当车</text><text x="428" y="139" class="map-small">Cable Car / Union Square</text>
-        <circle class="map-pin" cx="308" cy="230" r="8"/><text x="316" y="232" class="map-label">彩绘女士</text><text x="316" y="247" class="map-small">Alamo Square</text>
-        <circle class="map-pin" cx="250" cy="294" r="8"/><text x="258" y="292" class="map-label">双子峰</text><text x="258" y="307" class="map-small">Twin Peaks 夜景</text>
-        <text x="650" y="58" class="map-small">示意图非精确比例；实际导航以 Google Maps 为准</text>
-      </svg>
+    <div class="static-map" aria-label="旧金山 D10 景点静态旅游地图">
+      <a href="${src}" target="_blank" rel="noopener">
+        <img src="${src}" alt="旧金山 D10 旅游地图：金门大桥、恶魔岛、渔人码头、九曲花街、艺术宫、联合广场、金门公园、双子峰" loading="lazy">
+      </a>
+      <div class="static-map-caption">旧金山 D10 参考地图，来源：<a href="https://www.meilvtong.com/viewthread.php?tid=336" target="_blank" rel="noopener">美旅通</a>；实际导航以 Google Maps 为准。</div>
     </div>`;
 }
 
