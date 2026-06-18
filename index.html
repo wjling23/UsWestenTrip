@@ -275,19 +275,18 @@ const navRoute = [
   [37.8306,-119.4587], // Tenaya Lake
   [37.80,-119.50], [37.77,-119.55],
   [37.7456,-119.5936], // Yosemite Valley
-  [37.72,-119.62], [37.70,-119.71],
-  [37.674,-119.784], // El Portal
+  [37.7150,-119.6760], // Tunnel View / Wawona Road
+  [37.6474,-119.7206], // Yosemite West
 
-  // ── D9: El Portal → Glacier Point → SF (CA-140 → I-580) ──
-  [37.68,-119.75],
+  // ── D9: Yosemite West → Glacier Point → SF (Glacier Point Rd → CA-41/CA-99/I-580) ──
+  [37.6474,-119.7206], // Yosemite West
+  [37.6750,-119.6550], [37.7000,-119.6000],
   [37.730,-119.573], // Glacier Point
-  [37.65,-119.65], [37.55,-119.85],
-  [37.49,-119.97], // Mariposa
-  [37.42,-120.12], [37.35,-120.30],
-  [37.30,-120.48], // Merced
-  [37.33,-120.65], [37.38,-120.85],
-  [37.42,-121.05], [37.50,-121.30],
-  [37.55,-121.55], [37.60,-121.75],
+  [37.7000,-119.6500], [37.6200,-119.7000],
+  [37.55,-119.65], [37.35,-119.65],
+  [37.15,-119.75], [36.90,-120.00],
+  [36.75,-120.30], [37.30,-121.10],
+  [37.50,-121.50], [37.65,-121.90],
   [37.65,-121.95], [37.70,-122.15],
   [37.72,-122.30], [37.75,-122.38],
   [37.7749,-122.4194], // San Francisco
@@ -489,27 +488,29 @@ const days = [
       ["17:00-20:00","-","抵达后入住，在猛犸湖或毕晓普小镇用晚餐。今晚早休，为明天 Tioga Pass 翻山储备精力。"],
       ["-","-","🔁 <b>备选/过路：</b>如 D6 晚上不去 Omega Mart、D7 能早出发，可绕道 <b>Death Valley 死亡谷</b> 打卡恶水盆地和 Zabriskie Point（夏季极热谨慎）。或经 <b>Rhyolite Ghost Town 幽灵鬼镇</b> 拍废墟大片。途中 <b>Tonopah</b> 有老派汽车旅馆和星空观测点。"],
   ]},
-  { num:"D8", date:"2026.07.11 周六", color:"#d4442a", lodging:"埃尔波托尔 / 玛iposa", lodgingClass:"",
-    title:"翻越 Tioga Pass · 优胜美地核心谷地 · ⚠️ 查路况",
+  { num:"D8", date:"2026.07.11 周六", color:"#d4442a", lodging:"Yosemite West Airbnb", lodgingClass:"",
+    title:"翻越 Tioga Pass · 优胜美地山谷 · 入住Yosemite West",
     weather:{date:"2026-07-11", place:"优胜美地山谷", lat:37.7456, lng:-119.5936, tip:"山谷白天热、林荫处凉；同时关注山火烟雾和 Tioga 路况。"},
-    highlights:[{t:"⚠️查Tioga路况",c:"hl-drive"},{t:"Tioga Pass",c:"hl-drive"},{t:"Tenaya Lake",c:"hl-sight"},{t:"Tunnel View",c:"hl-sight"},{t:"酋长岩",c:"hl-sight"}],
-    routePts:[{n:"猛犸湖",lat:37.648,lng:-118.972},{n:"Tenaya Lake",lat:37.8306,lng:-119.4587,dist:64},{n:"优胜美地山谷",lat:37.7456,lng:-119.5936,dist:16},{n:"El Portal",lat:37.674,lng:-119.784,dist:48}],
+    highlights:[{t:"⚠️查Tioga路况",c:"hl-drive"},{t:"Tioga Pass",c:"hl-drive"},{t:"Tenaya Lake",c:"hl-sight"},{t:"山谷核心",c:"hl-sight"},{t:"Tunnel View",c:"hl-sight"},{t:"Yosemite West",c:"hl-stay"}],
+    routePts:[{n:"猛犸湖",lat:37.648,lng:-118.972},{n:"Tenaya Lake",lat:37.8306,lng:-119.4587,dist:64},{n:"优胜美地山谷",lat:37.7456,lng:-119.5936,dist:16},{n:"Tunnel View",lat:37.7150,lng:-119.6760,dist:14},{n:"Yosemite West",lat:37.6474,lng:-119.7206,dist:17}],
     events:[
       ["08:00-12:00","128 km","<b>【自驾高光·CA-120 Tioga Pass】</b>从猛犸湖出发，⚠️ <b>出发前必须查 Tioga Pass 开放状态</b>（nps.gov/yose/planyourvisit/tioga.htm）。如关闭则整条路线需绕南边，行程会崩。走 120 号公路东门翻越内华达山脉，沿途停靠<b>图奥勒米草甸</b>、<b>Olmsted Point</b>以及<b>天那雅湖（Tenaya Lake）</b>。"],
       ["12:00-13:00","-","在优胜美地山谷中心（Yosemite Valley Village）用午餐或吃自备路餐。"],
-      ["13:00-17:30","48 km","下午深度游览优胜美地山谷核心区：打卡经典的 <b>Tunnel View（隧道观景点）</b>；近距离观赏壮丽的<b>酋长岩（El Capitan）</b>及<b>新娘面纱瀑布</b>。下午5点半后出西门入住。<br>💰 优胜美地国家公园门票 $35/车（7天有效）。"],
-      ["-","-","🔁 <b>备选/过路：</b>如 Tioga Pass 关闭，需绕南边经 Bakersfield 进入（多 3-4 小时车程，整个行程节奏需重排）。谷内可选 <b>Mariposa Grove 巨杉林</b>（穿梭巴士可达），或 <b>Hetch Hetchy 水库步道</b>（人极少，安静）。"],
+      ["13:00-16:30","-","下午游览优胜美地山谷核心区：近距离看<b>酋长岩（El Capitan）</b>、<b>新娘面纱瀑布</b>、Yosemite Falls / Valley View 任选其二。周六山谷停车紧张，车停好后尽量少挪车，能走路/坐接驳就不反复找车位。<br>💰 优胜美地国家公园门票 $35/车（7天有效）。"],
+      ["16:30-18:30","31 km","离开山谷前顺路打卡 <b>Tunnel View（隧道观景点）</b>，随后沿 Wawona Road 开到 <b>Yosemite West Airbnb</b> 入住。Yosemite West 在公园内，离 Glacier Point Road 近，明早去冰川点比住 Mariposa/El Portal 省很多往返时间。"],
+      ["18:30-20:00","-","Airbnb 晚餐和休整。Yosemite West 没有大型超市和成熟餐饮，建议 D7 在 Bishop/Mammoth 或 D8 进谷前准备晚餐、早餐、饮用水和零食；夜里山路黑，不建议再开车下山买东西。"],
+      ["-","-","🔁 <b>备选/过路：</b>如 Tioga Pass 关闭，需绕南边经 Bakersfield 进入（多 3-4 小时车程，整个行程节奏需重排）。如果山谷周六人太多，就压缩山谷点位，保留 Tunnel View + Airbnb 休息；巨杉林放弃，不要再往 Wawona 南下硬塞。"],
   ]},
   { num:"D9", date:"2026.07.12 周日", color:"#1a6b8a", lodging:"旧金山 (渔人码头/联合广场)", lodgingClass:"",
-    title:"冰川点/塔夫点 · 西行下山 · 抵达旧金山 · 九曲花街",
+    title:"Yosemite West出发 · 冰川点/塔夫点 · 西行旧金山",
     weather:{date:"2026-07-12", place:"旧金山", lat:37.7749, lng:-122.4194, tip:"旧金山夏天常有冷雾和大风，晚上一定备外套。"},
     highlights:[{t:"⚠️查路况",c:"hl-drive"},{t:"冰川点/Taft Point",c:"hl-sight"},{t:"半圆顶全景",c:"hl-sight"},{t:"九曲花街",c:"hl-sight"}],
-    routePts:[{n:"El Portal",lat:37.674,lng:-119.784},{n:"Glacier Point",lat:37.730,lng:-119.573,dist:48},{n:"旧金山",lat:37.7749,lng:-122.4194,dist:304}],
+    routePts:[{n:"Yosemite West",lat:37.6474,lng:-119.7206},{n:"Glacier Point",lat:37.730,lng:-119.573,dist:33},{n:"旧金山",lat:37.7749,lng:-122.4194,dist:335}],
     events:[
-      ["08:30-11:30","48 km","<b>【自驾】</b>从西门重新入园。⚠️ <b>Glacier Point Road 经常季节性关闭</b>（修路/山火/积雪），出发前必须查 nps.gov/yose。如开放：盘山而上前往<b>冰川点（Glacier Point）</b>，居高临下俯瞰大山谷和半圆顶全景（游玩1.5小时）。<br>🔁 <b>如关闭，备用方案：Taft Point + Sentinel Dome</b>——Yosemite 真正封神级别步道，Taft Point 万丈悬崖裂缝比 Glacier Point 更震撼，中国游客极少知道。<br>💰 优胜美地门票 D8 已购，7天内有效，无需再付。"],
-      ["-","-","🔁 <b>备选/过路：</b>出山后可经 <b>Columbia State Historic Park 淘金历史小镇</b>（免费，穿19世纪服装合影），或在进入旧金山后去 <b>双子峰</b> 提前看夜景（D10 也有）。"],
-      ["11:30-15:30","304 km","<b>【自驾·CA-140/I-580】</b>一路下山离开山区，向西开往西海岸名城旧金山。"],
-      ["15:30-19:00","-","下午3点半左右通过海湾大桥进入旧金山。傍晚前往经典的<b>九曲花街（Lombard Street）</b>体验奇妙的倾斜盘山道，晚上在市区用晚餐。"],
+      ["08:00-11:30","33 km","<b>【自驾】</b>从 Yosemite West 出发，直接上 <b>Glacier Point Road</b>。⚠️ 出发前查 nps.gov/yose 路况。如开放：先到<b>冰川点（Glacier Point）</b>俯瞰大山谷和半圆顶，再按体力选择 <b>Sentinel Dome</b> 或 <b>Taft Point</b> 短徒步。住 Yosemite West 的优势就在这里：不用从西门/Mariposa 再开一大段回头路。<br>💰 优胜美地门票 D8 已购，7天内有效，无需再付。"],
+      ["11:30-16:30","335 km","<b>【自驾·CA-41/CA-99/I-580】</b>从 Yosemite West 一带下山，经 Oakhurst/Fresno 方向西行前往旧金山。中午在 Oakhurst 或 Fresno 周边解决，今天核心是尽早出山，避免傍晚才开始长途。"],
+      ["16:30-19:00","-","傍晚通过海湾大桥进入旧金山。体力允许就去<b>九曲花街（Lombard Street）</b>短停打卡；如果进城堵车或全家疲劳，九曲花街放到 D10，今晚只办理入住和晚餐。"],
+      ["-","-","🔁 <b>备选/过路：</b>如果 Glacier Point Road 关闭，就不要强行绕路，改成早上从 Yosemite West 直接补 <b>Tunnel View / Valley View</b>，或轻走 Wawona Road 附近短点后直接去旧金山。出山后可经 <b>Columbia State Historic Park 淘金历史小镇</b>（免费），但只有在全家状态好且不怕晚到旧金山时才加。"],
   ]},
   { num:"D10", date:"2026.07.13 周一", color:"#e67e22", lodging:"旧金山 (连住)", lodgingClass:"",
     title:"旧金山打卡 · 金门大桥 · 艺术宫 · 渔人码头 · 双子峰夜景",
@@ -577,7 +578,7 @@ const days = [
   ]},
 ];
 
-const daySegs = [[0,10],[11,13],[14,36],[37,61],[62,73],[74,96],[97,120],[121,133],[134,152],[153,157],[158,172],[173,193],[194,217]];
+const daySegs = [[0,10],[11,13],[14,36],[37,61],[62,73],[74,96],[97,120],[121,132],[133,151],[152,156],[157,171],[172,192],[193,216]];
 
 // ═══════════ FULL MAP ═══════════
 (function(){
