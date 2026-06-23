@@ -310,7 +310,7 @@ const navRoute = [
   [36.58,-121.91],
   [36.5552,-121.9233], // Carmel
 
-  // ── D12: Carmel → 17-Mile Drive → Big Sur → Elephant Seal → San Luis Obispo / Morro Bay (CA-1) ──
+  // ── D12: Carmel → 17-Mile Drive → Big Sur → Elephant Seal → Solvang / Buellton (CA-1 → US-101) ──
   [36.5552,-121.9233], // Carmel
   [36.6002,-121.8947], // 17-Mile Drive / Monterey
   [36.53,-121.93], [36.48,-121.92],
@@ -325,11 +325,11 @@ const navRoute = [
   [35.62,-121.20], [35.55,-121.10],
   [35.46,-121.00], [35.40,-120.85],
   [35.28,-120.66], // San Luis Obispo
-
-  // ── D13: San Luis Obispo / Morro Bay → Solvang → Santa Barbara → Santa Monica → LAX ──
   [35.10,-120.58], [34.95,-120.45],
   [34.80,-120.30], [34.70,-120.22],
   [34.5947,-120.1387], // Solvang
+
+  // ── D13: Solvang / Buellton → Santa Barbara → Santa Monica → LAX ──
   [34.57,-120.08], [34.52,-119.95],
   [34.48,-119.85], [34.45,-119.75],
   [34.4208,-119.6982], // Santa Barbara
@@ -378,8 +378,8 @@ const waypoints = [
   { name:"大苏尔 Bixby大桥", lat:36.3716, lng:-121.9017, type:"park", day:"D12", dist:40 },
   { name:"McWay 瀑布", lat:36.1578, lng:-121.6710, type:"park", day:"D12", dist:30 },
   { name:"象海豹滩", lat:35.6634, lng:-121.2660, type:"sight", day:"D12", dist:130 },
-  { name:"San Luis Obispo / Morro Bay", lat:35.28, lng:-120.66, type:"city", day:"D12", dist:75 },
-  { name:"丹麦村 Solvang", lat:34.5947, lng:-120.1387, type:"culture", day:"D13", dist:105 },
+  { name:"San Luis Obispo / Morro Bay", lat:35.28, lng:-120.66, type:"city", day:"D12短停", dist:75 },
+  { name:"丹麦村 Solvang", lat:34.5947, lng:-120.1387, type:"culture", day:"D12-D13", dist:105 },
   { name:"圣芭芭拉", lat:34.4208, lng:-119.6982, type:"city", day:"D13", dist:65 },
   { name:"马里布海岸", lat:34.0356, lng:-118.6894, type:"sight", day:"D13", dist:125 },
   { name:"LAX 洛杉矶机场", lat:33.9416, lng:-118.4085, type:"end", day:"D13-D14", dist:24 },
@@ -538,29 +538,29 @@ const days = [
       ["17:30-19:00","8 km","傍晚开到<b>卡梅尔（Carmel-by-the-Sea）</b>入住，在小镇散步并用晚餐。17-Mile Drive 挪到明早，今天不赶海岸线。"],
       ["-","-","🔁 <b>备选/过路：</b>如果想补科技感，可把斯坦福压缩为1小时，顺路短停 <b>Apple Park Visitor Center</b>；但带孩子慢逛水族馆时不建议再加苹果总部。"],
   ]},
-  { num:"D12", date:"2026.07.15 周三", color:"#16a085", lodging:"San Luis Obispo / Morro Bay", lodgingClass:"",
-    title:"17哩海滩 · 大苏尔 · McWay瀑布 · 象海豹 · 中海岸休整",
-    weather:{date:"2026-07-15", place:"Big Sur → San Luis Obispo", lat:35.2828, lng:-120.6596, tip:"海岸早晚凉，Big Sur 多雾多风；当天不赶到圣芭芭拉，节奏更稳。"},
-    highlights:[{t:"17哩海滩",c:"hl-sight"},{t:"大苏尔",c:"hl-drive"},{t:"Bixby大桥",c:"hl-sight"},{t:"McWay瀑布",c:"hl-sight"},{t:"象海豹",c:"hl-sight"},{t:"Morro Bay",c:"hl-stay"}],
-    routePts:[{n:"卡梅尔",lat:36.5552,lng:-121.9233},{n:"17哩海滩",lat:36.6002,lng:-121.8947,dist:18},{n:"Bixby大桥",lat:36.3716,lng:-121.9017,dist:40},{n:"McWay瀑布",lat:36.1578,lng:-121.671,dist:30},{n:"象海豹滩",lat:35.6634,lng:-121.266,dist:100},{n:"San Luis Obispo / Morro Bay",lat:35.28,lng:-120.66,dist:75}],
+  { num:"D12", date:"2026.07.15 周三", color:"#16a085", lodging:"Solvang / Buellton", lodgingClass:"",
+    title:"17哩海滩 · 大苏尔 · McWay瀑布 · 象海豹 · 夜宿丹麦村",
+    weather:{date:"2026-07-15", place:"Big Sur → Solvang", lat:34.5947, lng:-120.1387, tip:"海岸早晚凉，Big Sur 多雾多风；D12 可推进到 Solvang，但不要在 CA-1 悬崖段夜驾。"},
+    highlights:[{t:"17哩海滩",c:"hl-sight"},{t:"大苏尔",c:"hl-drive"},{t:"Bixby大桥",c:"hl-sight"},{t:"McWay瀑布",c:"hl-sight"},{t:"象海豹",c:"hl-sight"},{t:"Solvang住宿",c:"hl-stay"}],
+    routePts:[{n:"卡梅尔",lat:36.5552,lng:-121.9233},{n:"17哩海滩",lat:36.6002,lng:-121.8947,dist:18},{n:"Bixby大桥",lat:36.3716,lng:-121.9017,dist:40},{n:"McWay瀑布",lat:36.1578,lng:-121.671,dist:30},{n:"象海豹滩",lat:35.6634,lng:-121.266,dist:100},{n:"San Luis Obispo / Morro Bay短停",lat:35.28,lng:-120.66,dist:75},{n:"Solvang / Buellton",lat:34.5947,lng:-120.1387,dist:105}],
     events:[
       ["08:30-10:00","18 km","<b>【17哩海滩 17-Mile Drive】</b>从卡梅尔出发，早上先走高档私家海岸线，打卡孤独松、Spanish Bay、海边高尔夫球场和礁石海岸。<br>💰 17-Mile Drive 过路费约 $12/车。"],
       ["10:00-12:00","70 km","<b>【自驾·CA-1 大苏尔】</b>驶入 1 号公路最震撼的悬崖海岸<b>大苏尔（Big Sur）</b>段。途中在<b>比克斯比大桥（Bixby Creek Bridge）</b>停靠拍照。"],
       ["12:00-12:30","-","🆕 <b>McWay 瀑布（McWay Falls）</b>——Big Sur 必打卡！瀑布直接流进太平洋，美国西海岸经典明信片机位。停车后步行几分钟即可到达观景台。<br>💰 McWay Falls 所在 Julia Pfeiffer Burns 州立公园停车 $10/车，Piedras Blancas 象海豹滩免费，丹麦村免费。"],
       ["12:30-13:30","-","继续沿悬崖海岸南下，在海景餐厅或路边补给点吃个简餐。"],
-      ["13:30-16:00","175 km","<b>【自驾·CA-1】</b>中途停靠 <b>Piedras Blancas</b>，看野生<b>象海豹</b>躺在沙滩上晒太阳（30分钟）。之后继续南下，避开傍晚继续赶往圣芭芭拉的疲劳段。"],
-      ["16:00-18:30","75 km","傍晚抵达 <b>San Luis Obispo / Morro Bay</b> 一带入住。推荐 Morro Bay 看大石头和海港日落，或住 San Luis Obispo 市中心，吃饭补给更方便。"],
-      ["-","-","🔁 <b>备选/过路：</b>Big Sur 往南可预约 <b>Hearst Castle 赫氏古堡</b>（$30/人，需提前订）；如果当天体力一般，直接跳过古堡，优先保证 Big Sur、McWay Falls 和象海豹。"],
+      ["13:30-16:00","175 km","<b>【自驾·CA-1】</b>中途停靠 <b>Piedras Blancas</b>，看野生<b>象海豹</b>躺在沙滩上晒太阳（30分钟）。之后继续南下，先到 San Luis Obispo / Morro Bay 一带。"],
+      ["16:00-18:00","75 km","傍晚在 <b>San Luis Obispo / Morro Bay</b> 短停：Morro Rock 看海港日落，或在 SLO 市中心吃早晚餐/补给。这里不住宿，只作为中海岸休整点。"],
+      ["18:00-20:30","105 km","<b>【继续推进】</b>沿 US-101 南下到 <b>Solvang / Buellton</b> 入住。这样 D13 一早就在丹麦村附近，不用再从 SLO 往南赶，最后一天会松很多。"],
+      ["-","-","🔁 <b>备选/过路：</b>Big Sur 往南可预约 <b>Hearst Castle 赫氏古堡</b>（$30/人，需提前订）；如果当天体力一般，仍可退回旧方案住 <b>San Luis Obispo / Morro Bay</b>。但正常情况下，D12 推进到 Solvang / Buellton 更适合你们 21:00 左右到酒店的节奏。"],
   ]},
   { num:"D13", date:"2026.07.16 周四", color:"#e74c3c", lodging:"洛杉矶机场附近", lodgingClass:"last",
-    title:"丹麦村 · 圣芭芭拉 · Malibu海岸 · Santa Monica · LAX还车",
+    title:"丹麦村晨逛 · 圣芭芭拉 · Malibu海岸 · Santa Monica · LAX还车",
     weather:{date:"2026-07-16", place:"Santa Monica / LAX", lat:34.0094, lng:-118.4973, tip:"海边傍晚偏凉，回 LAX 要预留洛杉矶晚高峰缓冲。"},
     highlights:[{t:"丹麦村",c:"hl-food"},{t:"圣芭芭拉",c:"hl-sight"},{t:"Malibu海岸",c:"hl-sight"},{t:"Santa Monica",c:"hl-sight"},{t:"LAX还车",c:"hl-stay"},{t:"机场酒店",c:"hl-stay"}],
-    routePts:[{n:"San Luis Obispo / Morro Bay",lat:35.28,lng:-120.66},{n:"丹麦村",lat:34.5947,lng:-120.1387,dist:105},{n:"圣芭芭拉",lat:34.4208,lng:-119.6982,dist:65},{n:"Malibu海岸",lat:34.0356,lng:-118.6894,dist:125},{n:"Santa Monica",lat:34.0094,lng:-118.4973,dist:25},{n:"LAX租车点/机场酒店",lat:33.9416,lng:-118.4085,dist:18}],
+    routePts:[{n:"Solvang / Buellton",lat:34.5947,lng:-120.1387},{n:"圣芭芭拉",lat:34.4208,lng:-119.6982,dist:65},{n:"Malibu海岸",lat:34.0356,lng:-118.6894,dist:125},{n:"Santa Monica",lat:34.0094,lng:-118.4973,dist:25},{n:"LAX租车点/机场酒店",lat:33.9416,lng:-118.4085,dist:18}],
     events:[
-      ["09:00-10:30","105 km","<b>【自驾·US-101】</b>从 San Luis Obispo / Morro Bay 出发，前往满是北欧风车和童话木屋的<b>丹麦村（Solvang）</b>。"],
-      ["10:30-12:00","-","<b>【丹麦村】</b>轻松散步，买丹麦糕点和咖啡，不深度逛，给后面的圣芭芭拉和回洛杉矶留时间。"],
-      ["12:00-14:30","65 km","<b>【自驾·US-101】</b>前往极具西班牙殖民风情的海滨度假小镇<b>圣芭芭拉</b>。在市中心法院钟楼俯瞰红瓦白墙的城市全景，午餐可安排海边栈桥或市中心。"],
+      ["09:00-10:30","-","<b>【丹麦村 Solvang】</b>从 Solvang / Buellton 酒店出发，轻松晨逛丹麦村，买丹麦糕点和咖啡。D12 已经开到这里，所以今天不用一早赶路。"],
+      ["10:30-13:30","65 km","<b>【自驾·US-101】</b>前往极具西班牙殖民风情的海滨度假小镇<b>圣芭芭拉</b>。在市中心法院钟楼俯瞰红瓦白墙的城市全景，午餐可安排海边栈桥或市中心。"],
       ["14:30-16:30","125 km","<b>【自驾·US-101 / CA-1】</b>沿海岸方向进入 <b>Malibu 马里布海岸</b>，选一个好停车的海边点短停看海，不做深度沙滩行程。"],
       ["16:30-20:45","25 km","继续开到 <b>Santa Monica</b>，补第一天没去的海边打卡：Santa Monica Pier、海滩和第三街步行街择一。傍晚看海、简单晚餐，把最后一天节奏放松一点。"],
       ["20:45-21:15","-","离开 Santa Monica 前整理车内物品，确认没有行李、充电器、墨镜、水杯等遗留在座椅和后备箱角落。"],
@@ -578,7 +578,7 @@ const days = [
   ]},
 ];
 
-const daySegs = [[0,10],[11,13],[14,36],[37,61],[62,73],[74,96],[97,120],[121,132],[133,151],[152,156],[157,171],[172,192],[193,216]];
+const daySegs = [[0,10],[11,13],[14,36],[37,61],[62,73],[74,96],[97,120],[121,132],[133,151],[152,156],[157,171],[172,197],[198,216]];
 
 // ═══════════ FULL MAP ═══════════
 (function(){
